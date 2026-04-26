@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Craftihouse · Agent Dashboard</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
+body{background:#1C110A;color:#F2E8D5;min-height:100vh;}
+
+#ch-login{position:fixed;inset:0;background:#1C110A;display:flex;align-items:center;justify-content:center;z-index:999;}
+.ch-lbox{background:#140c05;border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:32px;width:290px;text-align:center;}
+.ch-lbox h2{color:#E8C97A;font-size:22px;margin-bottom:4px;letter-spacing:0.03em;}
+.ch-lbox p{color:#9A8468;font-size:12px;margin-bottom:20px;}
+.ch-lbox input{width:100%;padding:10px 12px;background:rgba(201,168,76,0.08);border:1.5px solid rgba(201,168,76,0.2);border-radius:8px;color:#F2E8D5;font-size:13px;outline:none;margin-bottom:10px;}
+.ch-lbox input:focus{border-color:#C9A84C;}
+.ch-lbox button{width:100%;padding:11px;background:linear-gradient(135deg,#E8C97A,#A07830);border:none;border-radius:8px;font-size:13px;font-weight:600;color:#1C110A;cursor:pointer;}
+#ch-lerr{color:#e05c5c;font-size:11px;margin-top:8px;display:none;}
+
+#ch-app{display:none;flex-direction:column;min-height:100vh;}
+.ch-top{background:linear-gradient(90deg,#1C110A,#3D200E);padding:12px 18px;border-bottom:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:space-between;}
+.ch-top-name{font-size:17px;font-weight:700;color:#E8C97A;letter-spacing:0.03em;}
+.ch-top-sub{font-size:9px;color:#9A8468;text-transform:uppercase;letter-spacing:0.08em;}
+.ch-top-right{display:flex;align-items:center;gap:10px;}
+#ch-export-btn{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);color:#C9A84C;border-radius:8px;padding:5px 12px;font-size:11px;cursor:pointer;}
+#ch-newbadge{background:#e05c5c;color:#fff;font-size:10px;padding:2px 9px;border-radius:10px;display:none;}
+#ch-stat{font-size:11px;color:#5AA876;}
+
+/* TABS */
+.ch-tabs{display:flex;background:#140c05;border-bottom:1px solid rgba(201,168,76,0.1);}
+.ch-tab{padding:10px 20px;font-size:12px;color:#9A8468;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+.ch-tab.active{color:#E8C97A;border-bottom-color:#C9A84C;}
+.ch-tab-content{display:none;flex:1;}
+.ch-tab-content.active{display:flex;flex:1;}
+
+.ch-body{display:flex;flex:1;}
+.ch-sidebar{width:270px;background:#140c05;border-right:1px solid rgba(201,168,76,0.1);min-height:calc(100vh - 90px);flex-shrink:0;}
+.ch-sidebar-hdr{padding:10px 14px;font-size:10px;font-weight:600;color:#9A8468;text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid rgba(201,168,76,0.08);}
+#ch-clist{padding:6px;}
+.ch-ci{padding:10px 11px;border-radius:8px;cursor:pointer;margin-bottom:3px;border:1px solid transparent;transition:background 0.15s;}
+.ch-ci:hover,.ch-ci.sel{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.2);}
+.ch-ci-name{font-size:13px;font-weight:600;color:#E8C97A;margin-bottom:1px;}
+.ch-ci-email{font-size:10px;color:#9A8468;}
+.ch-ci-prev{font-size:10px;color:#9A8468;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.ch-ci-topic{font-size:10px;color:#C9A84C;margin-top:2px;}
+.ch-unread{display:inline-block;width:7px;height:7px;border-radius:50%;background:#e05c5c;margin-left:5px;vertical-align:middle;}
+
+.ch-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.ch-nochat{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:30px;text-align:center;}
+#ch-chat{display:none;flex-direction:column;flex:1;}
+.ch-chdr{background:#1a0e07;border-bottom:1px solid rgba(201,168,76,0.1);padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.ch-cav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#E8C97A,#A07830);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#1C110A;flex-shrink:0;}
+.ch-cname{font-size:14px;font-weight:600;color:#E8C97A;}
+.ch-cdetail{font-size:10px;color:#9A8468;}
+.ch-chdr-actions{margin-left:auto;display:flex;gap:6px;}
+.ch-wa-btn{display:flex;align-items:center;gap:5px;background:rgba(90,168,118,0.15);border:1px solid rgba(90,168,118,0.35);color:#5AA876;border-radius:8px;padding:5px 11px;font-size:11px;cursor:pointer;text-decoration:none;}
+.ch-ai-btn{display:flex;align-items:center;gap:5px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);color:#C9A84C;border-radius:8px;padding:5px 11px;font-size:11px;cursor:pointer;}
+.ch-ai-btn.loading{opacity:0.6;pointer-events:none;}
+.ch-cbar{background:#1a0e07;border-bottom:1px solid rgba(201,168,76,0.06);padding:7px 16px;display:flex;gap:18px;flex-wrap:wrap;}
+.ch-cf label{display:block;font-size:9px;color:#9A8468;text-transform:uppercase;margin-bottom:1px;}
+.ch-cf span{font-size:11px;color:#E8C97A;font-weight:500;}
+#ch-msgs{padding:14px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;max-height:calc(100vh - 380px);}
+.ch-msg{display:flex;gap:7px;align-items:flex-end;animation:fadein 0.2s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.ch-msg.ag{flex-direction:row-reverse;}
+.ch-mav{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.ch-msg:not(.ag) .ch-mav{background:linear-gradient(135deg,#E8C97A,#A07830);color:#1C110A;}
+.ch-msg.ag .ch-mav{background:#2563eb;color:#fff;}
+.ch-mwrap{max-width:76%;display:flex;flex-direction:column;gap:2px;}
+.ch-msg.ag .ch-mwrap{align-items:flex-end;}
+.ch-mbub{padding:9px 13px;font-size:13px;line-height:1.5;}
+.ch-msg:not(.ag) .ch-mbub{background:rgba(201,168,76,0.1);color:#F2E8D5;border-radius:13px 13px 13px 3px;border:1px solid rgba(201,168,76,0.15);}
+.ch-msg.ag .ch-mbub{background:#2563eb;color:#fff;border-radius:13px 13px 3px 13px;}
+.ch-mtime{font-size:9px;color:#9A8468;padding:0 2px;}
+.ch-msg.ag .ch-mtime{text-align:right;}
+.ch-reply{background:#140c05;border-top:2px solid rgba(201,168,76,0.2);padding:12px 14px;flex-shrink:0;}
+.ch-rlabel{font-size:10px;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.ch-qbtns{display:flex;gap:5px;margin-bottom:9px;overflow-x:auto;padding-bottom:2px;}
+.ch-qb{flex-shrink:0;background:transparent;border:1px solid rgba(201,168,76,0.3);color:#C9A84C;border-radius:12px;padding:5px 11px;font-size:11px;cursor:pointer;white-space:nowrap;}
+.ch-row{display:flex;gap:8px;align-items:flex-end;}
+.ch-tinp{flex:1;background:rgba(255,255,255,0.06);border:2px solid rgba(201,168,76,0.3);border-radius:12px;padding:10px 13px;}
+.ch-tinp textarea{width:100%;background:transparent;border:none;outline:none;font-size:14px;color:#F2E8D5;resize:none;line-height:1.5;max-height:80px;}
+.ch-tinp textarea::placeholder{color:#9A8468;opacity:0.6;}
+.ch-sbtn{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(135deg,#E8C97A,#A07830);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* LIVE VISITORS */
+#ch-visitors-panel{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.ch-vis-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:4px;}
+.ch-vis-stat{background:#140c05;border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:14px 18px;flex:1;min-width:120px;}
+.ch-vis-stat-num{font-size:28px;font-weight:700;color:#E8C97A;}
+.ch-vis-stat-label{font-size:10px;color:#9A8468;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+.ch-vis-hdr{font-size:10px;font-weight:600;color:#9A8468;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+#ch-vis-list{display:flex;flex-direction:column;gap:6px;}
+.ch-vis-item{background:#140c05;border:1px solid rgba(201,168,76,0.1);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:12px;animation:fadein 0.3s ease;}
+.ch-vis-flag{font-size:20px;flex-shrink:0;}
+.ch-vis-info{flex:1;min-width:0;}
+.ch-vis-country{font-size:12px;font-weight:600;color:#E8C97A;}
+.ch-vis-page{font-size:10px;color:#9A8468;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.ch-vis-time{font-size:10px;color:#9A8468;margin-top:1px;}
+.ch-vis-badges{display:flex;gap:4px;flex-shrink:0;}
+.ch-vis-badge{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;}
+.ch-vis-badge.chat{background:rgba(201,168,76,0.2);color:#C9A84C;border:1px solid rgba(201,168,76,0.3);}
+.ch-vis-badge.device{background:rgba(255,255,255,0.06);color:#9A8468;border:1px solid rgba(255,255,255,0.08);}
+.ch-vis-badge.online{background:rgba(90,168,118,0.2);color:#5AA876;border:1px solid rgba(90,168,118,0.3);}
+.ch-no-visitors{text-align:center;padding:40px 20px;color:#9A8468;font-size:13px;}
+
+#ch-toast{position:fixed;top:14px;right:14px;background:#3D200E;border:1px solid rgba(201,168,76,0.4);border-radius:12px;padding:12px 16px;max-width:270px;z-index:9999;transform:translateX(130%);transition:transform 0.4s;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+#ch-toast.show{transform:translateX(0);}
+#ch-toast b{display:block;font-size:13px;color:#E8C97A;margin-bottom:2px;}
+#ch-toast span{font-size:11px;color:#F2E8D5;opacity:0.8;}
+
+@media(max-width:640px){
+  .ch-sidebar{width:100%;}
+  .ch-body{flex-direction:column;}
+  #ch-chat{position:fixed;inset:0;top:90px;z-index:100;background:#1C110A;overflow-y:auto;}
+}
+</style>
+</head>
+<body>
+
+<div id="ch-login">
+  <div class="ch-lbox">
+    <h2>✦ Craftihouse</h2>
+    <p>Agent Dashboard</p>
+    <input type="password" id="ch-pwd" placeholder="Enter password"/>
+    <button onclick="chLogin()">Sign In →</button>
+    <div id="ch-lerr">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<div id="ch-app">
+  <div class="ch-top">
+    <div>
+      <div class="ch-top-name">✦ Craftihouse</div>
+      <div class="ch-top-sub">Agent Dashboard</div>
+    </div>
+    <div class="ch-top-right">
+      <button id="ch-export-btn" onclick="chExportCSV()">⬇ Export Contacts</button>
+      <span style="width:7px;height:7px;border-radius:50%;background:#5AA876;display:inline-block;"></span>
+      <span id="ch-stat">Connecting...</span>
+      <span id="ch-newbadge"></span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="ch-tabs">
+    <div class="ch-tab active" onclick="chSwitchTab('conversations')">💬 Conversations</div>
+    <div class="ch-tab" onclick="chSwitchTab('visitors')">🟢 Live Visitors <span id="ch-vis-count" style="background:#5AA876;color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:4px;">0</span></div>
+  </div>
+
+  <!-- CONVERSATIONS TAB -->
+  <div class="ch-tab-content active" id="tab-conversations">
+    <div class="ch-body">
+      <div class="ch-sidebar">
+        <div class="ch-sidebar-hdr">Conversations</div>
+        <div id="ch-clist">
+          <p style="padding:24px 16px;font-size:12px;color:#9A8468;text-align:center;line-height:1.8;">
+            ⏳ Waiting...<br/>Visitors who chat on craftihouse.com appear here.
+          </p>
+        </div>
+      </div>
+      <div class="ch-main">
+        <div class="ch-nochat" id="ch-nochat">
+          <div style="font-size:48px;opacity:0.1;">✦</div>
+          <p style="color:rgba(232,201,122,0.3);font-size:16px;font-weight:600;">Select a conversation</p>
+          <p style="font-size:12px;color:#9A8468;">Choose from the sidebar to reply</p>
+        </div>
+        <div id="ch-chat">
+          <div class="ch-chdr">
+            <div class="ch-cav" id="ch-cav">?</div>
+            <div>
+              <div class="ch-cname" id="ch-cname"></div>
+              <div class="ch-cdetail" id="ch-cdet"></div>
+            </div>
+            <div class="ch-chdr-actions">
+              <button class="ch-ai-btn" id="ch-ai-btn" onclick="chAIReply()">✦ AI Suggest</button>
+              <a class="ch-wa-btn" id="ch-wa-link" href="#" target="_blank">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#5AA876"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.858L.057 23.704a.75.75 0 0 0 .916.939l5.959-1.562A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.697 9.697 0 0 1-4.932-1.343l-.354-.21-3.637.954.97-3.544-.229-.366A9.712 9.712 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+                WhatsApp
+              </a>
+            </div>
+          </div>
+          <div class="ch-cbar" id="ch-cbar"></div>
+          <div id="ch-msgs"></div>
+          <div class="ch-reply">
+            <div class="ch-rlabel">✦ Your Reply</div>
+            <div class="ch-qbtns">
+              <button class="ch-qb" onclick="chIns('Thank you for contacting Craftihouse! How can I help you today? ✨')">Greeting</button>
+              <button class="ch-qb" onclick="chIns('I will check this right away!')">On it</button>
+              <button class="ch-qb" onclick="chIns('Please share your order number and I will look that up.')">Order #</button>
+              <button class="ch-qb" onclick="chIns('We would love to help with your corporate gift inquiry! What is the occasion and quantity?')">Corp. Gifts</button>
+              <button class="ch-qb" onclick="chIns('Happy to help! Is there anything else I can assist you with?')">Follow up</button>
+              <button class="ch-qb" onclick="chIns('For faster support, please reach us directly on WhatsApp: +971558513794')">→ WhatsApp</button>
+            </div>
+            <div class="ch-row">
+              <div class="ch-tinp">
+                <textarea id="ch-rinp" rows="2" placeholder="Type reply here… (Enter to send)"></textarea>
+              </div>
+              <button class="ch-sbtn" onclick="chSend()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                  <path d="M22 2L11 13" stroke="#1C110A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#1C110A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE VISITORS TAB -->
+  <div class="ch-tab-content" id="tab-visitors">
+    <div id="ch-visitors-panel">
+      <div class="ch-vis-stats">
+        <div class="ch-vis-stat">
+          <div class="ch-vis-stat-num" id="vis-total">0</div>
+          <div class="ch-vis-stat-label">🟢 Online Now</div>
+        </div>
+        <div class="ch-vis-stat">
+          <div class="ch-vis-stat-num" id="vis-chat">0</div>
+          <div class="ch-vis-stat-label">💬 Chatting</div>
+        </div>
+        <div class="ch-vis-stat">
+          <div class="ch-vis-stat-num" id="vis-mobile">0</div>
+          <div class="ch-vis-stat-label">📱 Mobile</div>
+        </div>
+        <div class="ch-vis-stat">
+          <div class="ch-vis-stat-num" id="vis-desktop">0</div>
+          <div class="ch-vis-stat-label">🖥 Desktop</div>
+        </div>
+      </div>
+      <div class="ch-vis-hdr">Live Visitors</div>
+      <div id="ch-vis-list">
+        <div class="ch-no-visitors">No visitors online right now.<br/>They will appear here when browsing craftihouse.com</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ch-toast"><b id="ch-tt"></b><span id="ch-tb"></span></div>
+
+<script>
+var chDB, chSessId = null, chML = null, chSessions = {}, chUnread = 0, chMsgHistory = [];
+window.CH_API_KEY = 'YOUR-API-KEY-HERE';
+var CHPASS = 'Craftihouse2024+@';
+var WA_NUMBER = '971558513794';
+
+function chLogin() {
+  if (document.getElementById('ch-pwd').value === CHPASS) {
+    document.getElementById('ch-login').style.display = 'none';
+    document.getElementById('ch-app').style.display = 'flex';
+    document.getElementById('ch-app').style.flexDirection = 'column';
+    chInitFB();
+  } else {
+    document.getElementById('ch-lerr').style.display = 'block';
+  }
+}
+document.getElementById('ch-pwd').addEventListener('keydown', function(e) { if (e.key === 'Enter') chLogin(); });
+
+function chSwitchTab(tab) {
+  document.querySelectorAll('.ch-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.ch-tab-content').forEach(function(t) { t.classList.remove('active'); });
+  if (tab === 'conversations') {
+    document.querySelectorAll('.ch-tab')[0].classList.add('active');
+    document.getElementById('tab-conversations').classList.add('active');
+  } else {
+    document.querySelectorAll('.ch-tab')[1].classList.add('active');
+    document.getElementById('tab-visitors').classList.add('active');
+  }
+}
+
+function chInitFB() {
+  try {
+    firebase.initializeApp({
+      apiKey: "AIzaSyCYsdLw4NDSmF-RDJjh74LC2zs7wW8SGE4",
+      authDomain: "craftihouse---chat.firebaseapp.com",
+      databaseURL: "https://craftihouse---chat-default-rtdb.firebaseio.com",
+      projectId: "craftihouse---chat",
+      storageBucket: "craftihouse---chat.firebasestorage.app",
+      messagingSenderId: "111425010466",
+      appId: "1:111425010466:web:a711d1d5ed7a5f2d08437b"
+    });
+    chDB = firebase.database();
+    document.getElementById('ch-stat').textContent = 'Online';
+    chListen();
+    chListenVisitors();
+    if (Notification && Notification.permission === 'default') Notification.requestPermission();
+  } catch (e) {
+    document.getElementById('ch-stat').textContent = 'Error';
+    console.error(e);
+  }
+}
+
+function chListen() {
+  chDB.ref('sessions').on('child_added', function(snap) {
+    var id = snap.key, val = snap.val();
+    if (!val) return;
+    chSessions[id] = val;
+    chRenderCI(id, val);
+    chDB.ref('sessions/' + id).on('value', function(s) {
+      var prev = chSessions[id];
+      chSessions[id] = s.val();
+      if (s.val() && s.val().unreadByAgent && prev && !prev.unreadByAgent && id !== chSessId) {
+        chToast(s.val()); chSound(); chUnread++; chBadge();
+      }
+      chRenderCI(id, s.val());
+    });
+  });
+}
+
+function chListenVisitors() {
+  chDB.ref('liveVisitors').on('value', function(snap) {
+    var visitors = [];
+    snap.forEach(function(child) {
+      var v = child.val();
+      if (v) visitors.push(v);
+    });
+    chRenderVisitors(visitors);
+  });
+}
+
+function getFlagEmoji(countryCode) {
+  if (!countryCode || countryCode.length !== 2) return '🌍';
+  var code = countryCode.toUpperCase();
+  return String.fromCodePoint(
+    code.charCodeAt(0) + 127397,
+    code.charCodeAt(1) + 127397
+  );
+}
+
+function chRenderVisitors(visitors) {
+  var total = visitors.length;
+  var chatting = visitors.filter(function(v) { return v.chatOpened; }).length;
+  var mobile = visitors.filter(function(v) { return v.userAgent === 'Mobile'; }).length;
+  var desktop = total - mobile;
+
+  document.getElementById('vis-total').textContent = total;
+  document.getElementById('vis-chat').textContent = chatting;
+  document.getElementById('vis-mobile').textContent = mobile;
+  document.getElementById('vis-desktop').textContent = desktop;
+  document.getElementById('ch-vis-count').textContent = total;
+
+  var list = document.getElementById('ch-vis-list');
+  if (total === 0) {
+    list.innerHTML = '<div class="ch-no-visitors">No visitors online right now.<br/>They will appear here when browsing craftihouse.com</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  visitors.forEach(function(v) {
+    var timeOnSite = v.timeOnSite || 0;
+    var timeStr = timeOnSite < 60 ? timeOnSite + 's' : Math.floor(timeOnSite / 60) + 'm ' + (timeOnSite % 60) + 's';
+    var flag = getFlagEmoji(v.flag);
+    var page = v.page || '/';
+    var d = document.createElement('div');
+    d.className = 'ch-vis-item';
+    d.innerHTML = '<div class="ch-vis-flag">' + flag + '</div>' +
+      '<div class="ch-vis-info">' +
+        '<div class="ch-vis-country">' + (v.country || 'Unknown') + (v.city ? ' · ' + v.city : '') + '</div>' +
+        '<div class="ch-vis-page">📄 ' + page + '</div>' +
+        '<div class="ch-vis-time">⏱ ' + timeStr + ' on site</div>' +
+      '</div>' +
+      '<div class="ch-vis-badges">' +
+        '<span class="ch-vis-badge online">🟢 Live</span>' +
+        (v.chatOpened ? '<span class="ch-vis-badge chat">💬 Chat</span>' : '') +
+        '<span class="ch-vis-badge device">' + (v.userAgent === 'Mobile' ? '📱' : '🖥') + '</span>' +
+      '</div>';
+    list.appendChild(d);
+  });
+}
+
+function chRenderCI(id, data) {
+  if (!data || !data.contact) return;
+  var c = data.contact;
+  var name = c.firstName || c.name || c.Name || 'Customer';
+  if (c.lastName) name += ' ' + c.lastName;
+  var ex = document.getElementById('chci-' + id);
+  var el = ex || document.createElement('div');
+  el.id = 'chci-' + id;
+  el.className = 'ch-ci' + (id === chSessId ? ' sel' : '');
+  el.innerHTML =
+    '<div class="ch-ci-name">' + name + (data.unreadByAgent && id !== chSessId ? '<span class="ch-unread"></span>' : '') + '</div>' +
+    '<div class="ch-ci-email">' + (c.email || '') + '</div>' +
+    (data.lastMessage ? '<div class="ch-ci-prev">' + data.lastMessage + '</div>' : '') +
+    (c.topic ? '<div class="ch-ci-topic">· ' + c.topic + '</div>' : '');
+  el.onclick = function() { chOpen(id); };
+  var list = document.getElementById('ch-clist');
+  var emp = list.querySelector('p'); if (emp) emp.remove();
+  if (!ex) list.insertBefore(el, list.firstChild);
+}
+
+function chOpen(id) {
+  chSessId = id;
+  chMsgHistory = [];
+  var data = chSessions[id];
+  if (!data || !data.contact) return;
+  var c = data.contact;
+  var name = (c.firstName || c.name || c.Name || 'Customer') + (c.lastName ? ' ' + c.lastName : '');
+  document.getElementById('ch-cav').textContent = name[0].toUpperCase();
+  document.getElementById('ch-cname').textContent = name;
+  document.getElementById('ch-cdet').textContent = (c.email || '') + (c.phone ? ' · ' + c.phone : '');
+  document.getElementById('ch-cbar').innerHTML = chCF('Email', c.email) + chCF('Phone', c.phone || '—') + chCF('Topic', c.topic || '—') + chCF('Source', data.source ? data.source.replace(/https?:\/\/[^/]+/, '') || '/' : '—');
+  var waMsg = encodeURIComponent('Hi ' + name + ', this is the Craftihouse team following up on your chat inquiry. How can we help you?');
+  var waLink = 'https://wa.me/' + (c.phone ? c.phone.replace(/\D/g, '') : WA_NUMBER) + '?text=' + waMsg;
+  document.getElementById('ch-wa-link').href = waLink;
+  document.getElementById('ch-nochat').style.display = 'none';
+  var chatEl = document.getElementById('ch-chat');
+  chatEl.style.display = 'flex';
+  chatEl.style.flexDirection = 'column';
+  document.getElementById('ch-msgs').innerHTML = '';
+  if (chML) { chDB.ref('sessions/' + id + '/messages').off(); chML = null; }
+  chML = chDB.ref('sessions/' + id + '/messages').on('child_added', function(snap) {
+    var m = snap.val();
+    if (m) {
+      chRenderMsg(m, c);
+      chMsgHistory.push({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text });
+    }
+  });
+  chDB.ref('sessions/' + id).update({ unreadByAgent: false });
+  if (data.unreadByAgent) { chUnread = Math.max(0, chUnread - 1); chBadge(); }
+  document.querySelectorAll('.ch-ci').forEach(function(el) { el.classList.remove('sel'); var u = el.querySelector('.ch-unread'); if (u) u.remove(); });
+  var ci = document.getElementById('chci-' + id); if (ci) ci.classList.add('sel');
+  setTimeout(function() { document.getElementById('ch-rinp').focus(); }, 200);
+}
+
+function chCF(label, val) {
+  return '<div class="ch-cf"><label>' + label + '</label><span>' + (val || '—') + '</span></div>';
+}
+
+function chRenderMsg(m, contact) {
+  var msgs = document.getElementById('ch-msgs');
+  var isAg = m.sender === 'agent';
+  var nm = contact ? (contact.firstName || contact.name || contact.Name || '') : '';
+  var d = document.createElement('div');
+  d.className = 'ch-msg' + (isAg ? ' ag' : '');
+  d.innerHTML =
+    '<div class="ch-mav">' + (isAg ? 'A' : (nm ? nm[0].toUpperCase() : 'C')) + '</div>' +
+    '<div class="ch-mwrap">' +
+      '<div class="ch-mbub">' + m.text.replace(/\n/g, '<br>') + '</div>' +
+      '<div class="ch-mtime">' + (m.time || '') + (m.auto ? ' · AI' : '') + '</div>' +
+    '</div>';
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function chSend() {
+  var inp = document.getElementById('ch-rinp');
+  var text = inp.value.trim();
+  if (!text || !chSessId) return;
+  inp.value = ''; inp.style.height = 'auto';
+  var now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  chDB.ref('sessions/' + chSessId + '/messages').push({
+    sender: 'agent', text: text, time: now,
+    ts: firebase.database.ServerValue.TIMESTAMP, auto: false
+  });
+  chDB.ref('sessions/' + chSessId).update({ lastMessage: 'You: ' + text, lastMessageTime: now });
+}
+
+function chIns(text) {
+  document.getElementById('ch-rinp').value = text;
+  document.getElementById('ch-rinp').focus();
+}
+
+document.getElementById('ch-rinp').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+});
+document.getElementById('ch-rinp').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chSend(); }
+});
+
+function chAIReply() {
+  if (!chSessId || chMsgHistory.length === 0) return;
+  var btn = document.getElementById('ch-ai-btn');
+  btn.classList.add('loading');
+  btn.textContent = '⏳ Thinking...';
+  fetch('https://craftihouse-chat.craftihouse.workers.dev', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-opus-4-5',
+      max_tokens: 300,
+      system: 'You are Layla, a warm elegant advisor for Craftihouse Dubai. Draft a concise 2-4 sentence reply for the agent based on the conversation. No filler phrases.',
+      messages: chMsgHistory
+    })
+  }).then(function(res) {
+    return res.json();
+  }).then(function(data) {
+    if (data.content && data.content[0]) {
+      document.getElementById('ch-rinp').value = data.content[0].text;
+      document.getElementById('ch-rinp').focus();
+    }
+    btn.classList.remove('loading');
+    btn.textContent = '✦ AI Suggest';
+  }).catch(function(e) {
+    alert('AI suggest failed.');
+    btn.classList.remove('loading');
+    btn.textContent = '✦ AI Suggest';
+  });
+}
+
+function chExportCSV() {
+  var rows = [['Name', 'Email', 'Phone', 'Topic', 'Date', 'Last Message']];
+  Object.values(chSessions).forEach(function(s) {
+    if (!s || !s.contact) return;
+    var c = s.contact;
+    var name = (c.firstName || c.name || c.Name || '') + (c.lastName ? ' ' + c.lastName : '');
+    var date = s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '';
+    rows.push([name, c.email || '', c.phone || '', c.topic || '', date, s.lastMessage || '']);
+  });
+  var csv = rows.map(function(r) {
+    return r.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',');
+  }).join('\n');
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'craftihouse-contacts-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function chToast(data) {
+  var c = data && data.contact ? data.contact : {};
+  var name = c.firstName || c.name || c.Name || 'Customer';
+  document.getElementById('ch-tt').textContent = '💬 New message from ' + name;
+  document.getElementById('ch-tb').textContent = data.lastMessage || 'Tap to view';
+  var t = document.getElementById('ch-toast');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 4500);
+  if (Notification && Notification.permission === 'granted')
+    new Notification('Craftihouse Chat', { body: name + ': ' + (data.lastMessage || '') });
+}
+
+function chSound() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = 880; g.gain.value = 0.25;
+    o.start(); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    o.stop(ctx.currentTime + 0.4);
+  } catch (e) {}
+}
+
+function chBadge() {
+  var b = document.getElementById('ch-newbadge');
+  if (chUnread > 0) {
+    b.style.cssText = 'background:#e05c5c;color:#fff;font-size:10px;padding:2px 9px;border-radius:10px;display:inline-block;';
+    b.textContent = chUnread + ' new';
+  } else {
+    b.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
