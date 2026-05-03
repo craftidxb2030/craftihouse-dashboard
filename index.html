@@ -269,6 +269,18 @@ function chInitFB() {
 }
 
 function chListen() {
+function chDeleteSession(id, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this conversation?')) return;
+  chDB.ref('sessions/' + id).remove();
+  var el = document.getElementById('sess-' + id);
+  if (el) el.remove();
+  if (chSessId === id) {
+    chSessId = null;
+    document.getElementById('ch-chat-area').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div style="text-align:center;"><p style=\"color:rgba(232,201,122,0.3);font-size:16px;font-weight:600;\">Select a conversation</p></div></div>';
+  }
+}
+
   chDB.ref('sessions').on('child_added', function(snap) {
     var id = snap.key, val = snap.val();
     if (!val) return;
@@ -288,7 +300,17 @@ function chListen() {
 function chListenVisitors() {
   chDB.ref('liveVisitors').on('value', function(snap) {
     var visitors = [];
-    snap.forEach(function(child) { var v = child.val(); if (v) visitors.push(v); });
+    var now = Date.now();
+    var TIMEOUT = 5 * 60 * 1000; // 5 minutes
+    snap.forEach(function(child) {
+      var v = child.val();
+      if (v && v.lastSeen && (now - v.lastSeen) < TIMEOUT) {
+        visitors.push(v);
+      } else if (v && v.lastSeen && (now - v.lastSeen) >= TIMEOUT) {
+        // Remove stale visitor from Firebase
+        chDB.ref('liveVisitors/' + child.key).remove();
+      }
+    });
     chRenderVisitors(visitors);
   });
 }
