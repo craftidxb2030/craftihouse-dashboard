@@ -202,22 +202,7 @@ body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;font-size:14px;}
 </div>
 
 <!-- ORDER MODAL -->
-<div class="modal-bg" id="order-modal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <div style="font-size:26px;margin-bottom:6px;">✦</div>
-      <div style="font-size:9px;letter-spacing:0.2em;color:#C9A84C;font-family:Arial,sans-serif;margin-bottom:4px;">ORDER CONFIRMED</div>
-      <div style="font-size:18px;color:#F2E8D5;">Added to Cart!</div>
-    </div>
-    <div class="modal-body">
-      <div id="modal-summary" style="background:#F2E8D5;border-radius:10px;padding:14px;margin-bottom:14px;font-size:12px;font-family:Arial,sans-serif;color:#1C110A;line-height:2;"></div>
-      <p style="font-size:11px;color:#6B5240;font-family:Arial,sans-serif;margin-bottom:14px;text-align:center;">Our team will contact you on WhatsApp to confirm payment and shipping.</p>
-      <a href="/cart.php" style="display:block;padding:12px;background:linear-gradient(135deg,#C9A84C,#8A5E1A);border-radius:8px;color:#1C110A;font-size:13px;font-weight:bold;text-align:center;text-decoration:none;font-family:Arial,sans-serif;margin-bottom:8px;">View Cart →</a>
-      <a id="modal-wa" href="#" target="_blank" style="display:block;padding:10px;background:rgba(90,168,118,0.12);border:1px solid rgba(90,168,118,0.3);border-radius:8px;color:#2E7D52;font-size:12px;font-weight:bold;text-align:center;text-decoration:none;font-family:Arial,sans-serif;margin-bottom:8px;">💬 Confirm Details on WhatsApp</a>
-      <button onclick="closeModal()" style="width:100%;padding:10px;background:transparent;border:1px solid rgba(201,168,76,0.2);border-radius:8px;color:#9A8468;font-size:12px;cursor:pointer;font-family:Arial,sans-serif;">Close</button>
-    </div>
-  </div>
-</div>
+
 
 <script>
 var selFont = 'nastaliq';
@@ -351,75 +336,19 @@ function selectColor(el) {
 
 function addToCart() {
   var text = document.getElementById('name-inp').value.trim();
-  if (!text) return;
+  if (!text) { alert('Please enter your name or text first.'); return; }
   var arabic = transliterate(text);
-  var orderNote = 'Calligraphy Text: ' + text + (arabic !== text ? ' (' + arabic + ')' : '')
-    + ' | Style: ' + fontFullNames[selFont]
-    + ' | Color: ' + selColorName
-    + ' | Size: 14x9 cm';
-
-  // Show loading
+  var note = 'Calligraphy: ' + text + (arabic !== text ? ' (' + arabic + ')' : '')
+    + ' | ' + fontFullNames[selFont]
+    + ' | ' + selColorName
+    + ' | 14x9 cm';
   var btn = document.getElementById('order-btn');
-  btn.textContent = 'Adding to cart...';
+  btn.textContent = 'Redirecting to cart...';
   btn.disabled = true;
-
-  // Add to BigCommerce cart via API
-  fetch('/api/storefront/carts', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      lineItems: [{
-        productId: 9855,
-        quantity: 1
-      }]
-    })
-  }).then(function(r) { return r.json(); })
-  .then(function(cartData) {
-    var cartId = cartData.id;
-    // Update cart with order note
-    return fetch('/api/storefront/carts/' + cartId, {
-      method: 'PUT',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ customerMessage: orderNote })
-    });
-  })
-  .then(function() {
-    // Show success modal
-    var arabic2 = transliterate(text);
-    document.getElementById('modal-summary').innerHTML =
-      '<strong>Text:</strong> ' + text + (arabic2 !== text ? ' → ' + arabic2 : '') + '<br/>' +
-      '<strong>Style:</strong> ' + fontFullNames[selFont] + '<br/>' +
-      '<strong>Color:</strong> ' + selColorName + '<br/>' +
-      '<strong>Size:</strong> 14 x 9 cm<br/>' +
-      '<strong>Price:</strong> 75 AED ($20.42 USD)';
-    var msg = 'Hi Craftihouse! I just added a custom Arabic calligraphy to my cart.\n\n'
-      + 'Text: ' + text + (arabic2 !== text ? ' (' + arabic2 + ')' : '') + '\n'
-      + 'Style: ' + fontFullNames[selFont] + '\n'
-      + 'Color: ' + selColorName + '\n'
-      + 'Size: 14x9 cm\n'
-      + 'Price: 75 AED';
-    document.getElementById('modal-wa').href = 'https://wa.me/971558513794?text=' + encodeURIComponent(msg);
-    // Redirect to BigCommerce cart with product 9855 and note
-  var arabicText = transliterate(text);
-  var note = 'Calligraphy Text: ' + text + ' (' + arabicText + ') | Style: ' + selectedFont + ' | Color: ' + selectedColorName + ' | Size: 14x9 cm';
-  window.location.href = '/cart.php?action=add&product_id=9855&note=' + encodeURIComponent(note);
-    btn.textContent = '✔ Added to Cart!';
-  })
-  .catch(function() {
-    // Fallback - redirect to product page
-    window.location.href = '/custom-arabic-calligraphy-handwritten-name-art/?note=' + encodeURIComponent(orderNote);
-  });
+  window.location.href = 'https://craftihouse.com/cart.php?action=add&product_id=9855';
 }
 
-function closeModal() {
-  document.getElementById('order-modal').classList.remove('show');
-}
 
-document.getElementById('order-modal').onclick = function(e) {
-  if (e.target === this) closeModal();
-};
 </script>
 </body>
 </html>
