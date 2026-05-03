@@ -284,7 +284,17 @@ function doOrder() {
   var btn = document.getElementById('order-btn');
   btn.textContent = 'Adding to cart...';
   btn.disabled = true;
-  window.location.href = 'https://craftihouse.com/cart.php?action=add&product_id=9855';
+
+  // Save selections to localStorage so customer can see them in cart
+  try {
+    localStorage.setItem('calli_name', text);
+    localStorage.setItem('calli_arabic', arabic);
+    localStorage.setItem('calli_font', fontNames[selFont]);
+    localStorage.setItem('calli_color', selColorName);
+  } catch(e) {}
+
+  // Go to product page so customer can fill in the options
+  window.location.href = 'https://craftihouse.com/custom-arabic-calligraphy-handwritten-name-art/';
 }
 </script>
 </body>
