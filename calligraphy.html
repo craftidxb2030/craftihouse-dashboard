@@ -2,324 +2,415 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Arabic Calligraphy Customizer | Craftihouse Dubai</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Custom Arabic Calligraphy | Craftihouse Dubai</title>
+<link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;min-height:100vh;}
+html,body{width:100%;overflow-x:hidden;}
+body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;font-size:14px;}
 
-.page-wrap{max-width:900px;margin:0 auto;padding:30px 16px;}
+.wrap{max-width:860px;margin:0 auto;padding:16px;}
 
-/* Header */
-.calli-header{text-align:center;margin-bottom:32px;}
-.calli-header .badge{font-size:10px;letter-spacing:0.25em;color:#C9A84C;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:8px;}
-.calli-header h1{font-size:28px;color:#1C110A;font-weight:normal;margin-bottom:6px;}
-.calli-header p{font-size:13px;color:#6B5240;font-family:Arial,sans-serif;line-height:1.6;}
+.top-header{background:linear-gradient(160deg,#1C110A,#3D200E);border-radius:16px 16px 0 0;padding:18px 20px;text-align:center;}
+.gold-bar{height:3px;background:linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C);}
+.card{background:#FDF8F0;border-radius:0 0 16px 16px;box-shadow:0 8px 40px rgba(28,17,10,0.1);}
 
-/* Main card */
-.calli-card{background:#FDF8F0;border-radius:20px;box-shadow:0 8px 40px rgba(28,17,10,0.1);overflow:hidden;}
+/* Two columns on desktop, one on mobile */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}}
 
-/* Gold top bar */
-.calli-card-top{background:linear-gradient(160deg,#1C110A,#3D200E);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.calli-card-top .brand{color:#E8C97A;font-size:16px;}
-.calli-card-top .price-tag{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.35);border-radius:20px;padding:6px 16px;color:#E8C97A;font-size:13px;font-family:Arial,sans-serif;font-weight:bold;}
+.left-col{padding:20px;border-right:1px solid #EDE3D0;}
+@media(max-width:600px){.left-col{border-right:none;border-bottom:1px solid #EDE3D0;padding:16px;}}
+.right-col{padding:20px;}
+@media(max-width:600px){.right-col{padding:16px;}}
 
-.gold-line{height:3px;background:linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C);}
-
-/* Body */
-.calli-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
-@media(max-width:640px){.calli-body{grid-template-columns:1fr;}}
-
-/* Left — controls */
-.calli-controls{padding:24px;border-right:1px solid #EDE3D0;}
-@media(max-width:640px){.calli-controls{border-right:none;border-bottom:1px solid #EDE3D0;}}
-
-.ctrl-section{margin-bottom:20px;}
-.ctrl-label{font-size:9px;letter-spacing:0.18em;color:#9A8468;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:8px;display:block;}
+.sec-label{font-size:9px;letter-spacing:0.18em;color:#9A8468;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:8px;display:block;}
 
 /* Name input */
-.name-input{width:100%;padding:11px 14px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:10px;font-size:15px;color:#1C110A;outline:none;font-family:'Amiri',serif;text-align:center;transition:border-color 0.2s;}
-.name-input:focus{border-color:#C9A84C;}
-.name-input::placeholder{color:#BBA98A;font-size:13px;}
+.name-inp{width:100%;padding:11px 14px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:10px;font-size:16px;color:#1C110A;outline:none;text-align:center;font-family:'Scheherazade New',serif;}
+.name-inp:focus{border-color:#C9A84C;}
 
-/* Font selector */
-.font-options{display:flex;flex-direction:column;gap:6px;}
-.font-opt{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:10px;cursor:pointer;transition:all 0.2s;}
-.font-opt:hover{background:#EDE3D0;border-color:#C9A84C;}
-.font-opt.active{background:rgba(201,168,76,0.12);border-color:#C9A84C;}
-.font-opt-name{font-size:11px;color:#6B5240;font-family:Arial,sans-serif;}
-.font-opt-preview{font-size:20px;color:#1C110A;direction:rtl;}
-.font-opt-preview.kufic{font-family:'Amiri',serif;letter-spacing:0.05em;}
-.font-opt-preview.nastaliq{font-family:'Scheherazade New',serif;}
-.font-opt-preview.shekasteh{font-family:'Amiri',serif;font-style:italic;}
-.font-opt .check{width:16px;height:16px;border-radius:50%;border:2px solid #C9A84C;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.font-opt.active .check{background:#C9A84C;}
-.font-opt.active .check::after{content:'';width:6px;height:6px;border-radius:50%;background:#1C110A;}
+/* Font buttons */
+.font-btns{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.font-btn{width:100%;padding:10px 14px;background:#F2E8D5;border:2px solid #E8D9BF;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:all 0.2s;text-align:left;}
+.font-btn:hover{border-color:rgba(201,168,76,0.5);background:#EDE3D0;}
+.font-btn.active{background:rgba(201,168,76,0.12);border-color:#C9A84C;}
+.font-btn-info{flex:1;}
+.font-btn-name{font-size:12px;font-weight:bold;color:#1C110A;font-family:Arial,sans-serif;margin-bottom:2px;}
+.font-btn-desc{font-size:10px;color:#9A8468;font-family:Arial,sans-serif;}
+.font-btn-prev{font-size:22px;direction:rtl;color:#1C110A;flex-shrink:0;min-width:60px;text-align:center;}
+.font-btn-check{width:18px;height:18px;border-radius:50%;border:2px solid #C9A84C;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.font-btn.active .font-btn-check{background:#C9A84C;}
+.font-btn.active .font-btn-check::after{content:'';width:7px;height:7px;border-radius:50%;background:#1C110A;}
 
-/* Color selector */
-.color-options{display:flex;gap:8px;flex-wrap:wrap;}
-.color-opt{width:32px;height:32px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;position:relative;}
-.color-opt:hover{transform:scale(1.1);}
-.color-opt.active{border-color:#C9A84C;transform:scale(1.15);}
-.color-opt.active::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:12px;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.5);}
+/* Color buttons */
+.color-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+.color-dot{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;position:relative;flex-shrink:0;}
+.color-dot:hover{transform:scale(1.1);}
+.color-dot.active{border-color:#C9A84C;transform:scale(1.15);}
+.color-dot.active::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:13px;font-weight:bold;text-shadow:0 1px 3px rgba(0,0,0,0.6);}
 
-/* Right — preview */
-.calli-preview{padding:24px;display:flex;flex-direction:column;}
-.preview-label{font-size:9px;letter-spacing:0.18em;color:#9A8468;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:12px;}
+/* Paper preview */
+.paper-outer{background:#F2E8D5;border-radius:12px;border:1px solid #E8D9BF;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.paper{width:100%;max-width:260px;aspect-ratio:14/9;background:#FDF6E3;border-radius:4px;box-shadow:0 4px 20px rgba(28,17,10,0.15);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.paper-border{position:absolute;inset:6px;border:1px solid rgba(201,168,76,0.2);border-radius:2px;pointer-events:none;}
+.paper-corner{position:absolute;width:10px;height:10px;border-color:rgba(201,168,76,0.35);border-style:solid;}
+.paper-corner.tl{top:9px;left:9px;border-width:1px 0 0 1px;}
+.paper-corner.tr{top:9px;right:9px;border-width:1px 1px 0 0;}
+.paper-corner.bl{bottom:9px;left:9px;border-width:0 0 1px 1px;}
+.paper-corner.br{bottom:9px;right:9px;border-width:0 1px 1px 0;}
+.calli-text{font-size:clamp(18px,6vw,38px);direction:rtl;text-align:center;padding:8px;line-height:1.5;word-break:break-word;max-width:90%;}
+.placeholder-txt{font-size:11px;color:#BBA98A;font-family:Arial,sans-serif;text-align:center;padding:10px;}
 
-.paper-wrap{flex:1;display:flex;align-items:center;justify-content:center;background:#F2E8D5;border-radius:12px;border:1px solid #E8D9BF;padding:20px;min-height:200px;position:relative;}
-
-/* Paper */
-.paper{width:100%;max-width:280px;aspect-ratio:14/9;background:#FDF6E3;border-radius:4px;box-shadow:0 4px 20px rgba(28,17,10,0.15),inset 0 0 0 1px rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-.paper::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(201,168,76,0.06) 28px,rgba(201,168,76,0.06) 29px);pointer-events:none;}
-.paper-border{position:absolute;inset:6px;border:1px solid rgba(201,168,76,0.25);border-radius:2px;pointer-events:none;}
-.paper-corner{position:absolute;width:12px;height:12px;border-color:rgba(201,168,76,0.4);border-style:solid;}
-.paper-corner.tl{top:10px;left:10px;border-width:1px 0 0 1px;}
-.paper-corner.tr{top:10px;right:10px;border-width:1px 1px 0 0;}
-.paper-corner.bl{bottom:10px;left:10px;border-width:0 0 1px 1px;}
-.paper-corner.br{bottom:10px;right:10px;border-width:0 1px 1px 0;}
-
-.calli-text{font-size:clamp(22px,5vw,42px);direction:rtl;text-align:center;padding:10px;line-height:1.4;transition:all 0.3s;word-break:break-word;max-width:100%;}
-.placeholder-text{font-size:12px;color:#BBA98A;font-family:Arial,sans-serif;text-align:center;}
-
-/* Size info */
-.size-info{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;}
-.size-badge{background:#1C110A;color:#E8C97A;font-size:10px;font-family:Arial,sans-serif;padding:3px 10px;border-radius:20px;}
-.size-note{font-size:10px;color:#9A8468;font-family:Arial,sans-serif;}
-
-/* Disclaimer */
-.disclaimer{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px 14px;margin-top:14px;font-size:10px;color:#6B5240;font-family:Arial,sans-serif;line-height:1.6;text-align:center;}
+.size-tag{background:#1C110A;color:#E8C97A;font-size:10px;font-family:Arial,sans-serif;padding:3px 12px;border-radius:20px;}
+.disclaimer{font-size:10px;color:#6B5240;font-family:Arial,sans-serif;line-height:1.6;text-align:center;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:8px 12px;}
+.translit-note{font-size:10px;color:#C9A84C;font-family:Arial,sans-serif;text-align:center;direction:rtl;margin-top:4px;display:none;}
 
 /* Bottom */
-.calli-bottom{padding:20px 24px;border-top:1px solid #EDE3D0;display:flex;gap:10px;flex-wrap:wrap;}
-.btn-order{flex:1;padding:13px;background:linear-gradient(135deg,#C9A84C,#8A5E1A);border:none;border-radius:10px;color:#1C110A;font-size:13px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;letter-spacing:0.05em;transition:opacity 0.2s;}
-.btn-order:hover{opacity:0.9;}
-.btn-order:disabled{opacity:0.4;cursor:not-allowed;}
-.btn-wa{flex:1;padding:13px;background:rgba(90,168,118,0.12);border:1px solid rgba(90,168,118,0.3);border-radius:10px;color:#2E7D52;font-size:13px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;text-decoration:none;text-align:center;display:block;transition:background 0.2s;}
-.btn-wa:hover{background:rgba(90,168,118,0.2);}
+.bottom-bar{padding:16px 20px;border-top:1px solid #EDE3D0;display:flex;gap:10px;flex-wrap:wrap;}
+.btn-order{flex:1;min-width:140px;padding:13px;background:linear-gradient(135deg,#C9A84C,#8A5E1A);border:none;border-radius:10px;color:#1C110A;font-size:13px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-order:disabled{opacity:0.35;cursor:not-allowed;}
+.btn-wa{flex:1;min-width:140px;padding:13px;background:rgba(90,168,118,0.12);border:1px solid rgba(90,168,118,0.3);border-radius:10px;color:#2E7D52;font-size:13px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;text-decoration:none;text-align:center;display:block;}
 
-/* Success modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
-.modal-overlay.show{opacity:1;pointer-events:all;}
-.modal-box{background:#FDF8F0;border-radius:20px;max-width:420px;width:100%;overflow:hidden;transform:translateY(20px);transition:transform 0.3s;}
-.modal-overlay.show .modal-box{transform:none;}
-.modal-head{background:linear-gradient(160deg,#1C110A,#3D200E);padding:24px;text-align:center;}
-.modal-body{padding:24px;}
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-bg.show{opacity:1;pointer-events:all;}
+.modal-box{background:#FDF8F0;border-radius:16px;max-width:400px;width:100%;overflow:hidden;transform:translateY(20px);transition:transform 0.3s;}
+.modal-bg.show .modal-box{transform:none;}
+.modal-head{background:linear-gradient(160deg,#1C110A,#3D200E);padding:20px;text-align:center;}
+.modal-body{padding:20px;}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="page-wrap">
-
-  <div class="calli-header">
-    <div class="badge">✦ Craftihouse Dubai · Est. 2003 ✦</div>
-    <h1>Arabic Calligraphy — Custom Name Art</h1>
-    <p>Order a handwritten calligraphy of your name or text by our professional Arabic calligrapher in Dubai.<br/>Each piece is individually crafted on premium paper and shipped worldwide.</p>
+  <!-- Header -->
+  <div class="top-header">
+    <div style="font-size:9px;letter-spacing:0.25em;color:#C9A84C;font-family:Arial,sans-serif;margin-bottom:6px;">✦ CRAFTIHOUSE.COM · DUBAI · EST. 2003 ✦</div>
+    <div style="font-size:22px;color:#E8C97A;margin-bottom:4px;">Custom Arabic Calligraphy</div>
+    <div style="font-size:11px;color:rgba(242,232,213,0.5);font-family:Arial,sans-serif;">Handwritten name art by our professional calligrapher in Dubai</div>
   </div>
+  <div class="gold-bar"></div>
 
-  <div class="calli-card">
-
-    <div class="calli-card-top">
-      <div class="brand">✦ Personalized Calligraphy Order</div>
-      <div class="price-tag">75 AED · $20.42 USD</div>
+  <div class="card">
+    <!-- Price bar -->
+    <div style="background:#1C110A;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:11px;color:rgba(232,201,122,0.6);font-family:Arial,sans-serif;">14 x 9 cm · Premium Paper · Ships Worldwide</div>
+      <div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.35);border-radius:20px;padding:5px 14px;color:#E8C97A;font-size:12px;font-family:Arial,sans-serif;font-weight:bold;">75 AED · $20.42</div>
     </div>
-    <div class="gold-line"></div>
 
-    <div class="calli-body">
+    <div class="two-col">
 
-      <!-- CONTROLS -->
-      <div class="calli-controls">
+      <!-- LEFT CONTROLS -->
+      <div class="left-col">
 
-        <!-- Name Input -->
-        <div class="ctrl-section">
-          <span class="ctrl-label">Your Name or Text (Arabic, English or Persian)</span>
-          <input id="name-input" class="name-input" type="text" placeholder="Type your name here..." maxlength="20" oninput="updatePreview()"/>
-          <div style="font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-top:5px;text-align:right;" id="char-count">0 / 20 characters</div>
-        </div>
-
-        <!-- Font Style -->
-        <div class="ctrl-section">
-          <span class="ctrl-label">Calligraphy Style</span>
-          <div class="font-options">
-            <div class="font-opt active" data-font="nastaliq" onclick="selectFont(this)">
-              <div>
-                <div style="font-size:11px;color:#1C110A;font-family:Arial,sans-serif;font-weight:bold;margin-bottom:2px;">نستعلیق — Nastaliq</div>
-                <div class="font-opt-name">Flowing & elegant — most popular</div>
-              </div>
-              <div class="font-opt-preview nastaliq" id="prev-nastaliq">نستعلیق</div>
-              <div class="check"></div>
-            </div>
-            <div class="font-opt" data-font="kufic" onclick="selectFont(this)">
-              <div>
-                <div style="font-size:11px;color:#1C110A;font-family:Arial,sans-serif;font-weight:bold;margin-bottom:2px;">کوفی — Kufic</div>
-                <div class="font-opt-name">Geometric & classic — timeless</div>
-              </div>
-              <div class="font-opt-preview kufic" id="prev-kufic">كوفي</div>
-              <div class="check"></div>
-            </div>
-            <div class="font-opt" data-font="shekasteh" onclick="selectFont(this)">
-              <div>
-                <div style="font-size:11px;color:#1C110A;font-family:Arial,sans-serif;font-weight:bold;margin-bottom:2px;">شکسته نستعلیق — Shekasteh</div>
-                <div class="font-opt-name">Broken cursive — artistic & expressive</div>
-              </div>
-              <div class="font-opt-preview shekasteh" id="prev-shekasteh">شکسته</div>
-              <div class="check"></div>
-            </div>
+        <!-- Name input -->
+        <div style="margin-bottom:16px;">
+          <span class="sec-label">Your Name or Text</span>
+          <input id="name-inp" class="name-inp" type="text" placeholder="Type in Arabic or English..." maxlength="25" oninput="updateAll()"/>
+          <div style="display:flex;justify-content:space-between;margin-top:4px;">
+            <div id="translit-note" class="translit-note"></div>
+            <div id="char-count" style="font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-left:auto;">0 / 25</div>
           </div>
         </div>
 
-        <!-- Color -->
-        <div class="ctrl-section">
-          <span class="ctrl-label">Ink Color</span>
-          <div class="color-options">
-            <div class="color-opt active" data-color="#1a1a1a" data-name="Black" style="background:#1a1a1a;" onclick="selectColor(this)" title="Black"></div>
-            <div class="color-opt" data-color="#8B1A1A" data-name="Red" style="background:#8B1A1A;" onclick="selectColor(this)" title="Red"></div>
-            <div class="color-opt" data-color="#1A5C1A" data-name="Green" style="background:#1A5C1A;" onclick="selectColor(this)" title="Green"></div>
-            <div class="color-opt" data-color="#1A3A8B" data-name="Blue" style="background:#1A3A8B;" onclick="selectColor(this)" title="Blue"></div>
-            <div class="color-opt" data-color="#0D1B3E" data-name="Navy Blue" style="background:#0D1B3E;" onclick="selectColor(this)" title="Navy Blue"></div>
+        <!-- Font selector -->
+        <div style="margin-bottom:16px;">
+          <span class="sec-label">Calligraphy Style</span>
+          <div class="font-btns">
+            <button type="button" class="font-btn active" id="btn-nastaliq" onclick="selectFont('nastaliq')">
+              <div class="font-btn-info">
+                <div class="font-btn-name">نستعلیق — Nastaliq</div>
+                <div class="font-btn-desc">Flowing & elegant · Most popular</div>
+              </div>
+              <div class="font-btn-prev" id="prev-nastaliq" style="font-family:'Scheherazade New',serif;">نستعلیق</div>
+              <div class="font-btn-check"></div>
+            </button>
+            <button type="button" class="font-btn" id="btn-kufic" onclick="selectFont('kufic')">
+              <div class="font-btn-info">
+                <div class="font-btn-name">کوفی — Kufic</div>
+                <div class="font-btn-desc">Geometric & bold · Classic style</div>
+              </div>
+              <div class="font-btn-prev" id="prev-kufic" style="font-family:'Noto Kufi Arabic',sans-serif;font-weight:700;">كوفي</div>
+              <div class="font-btn-check"></div>
+            </button>
+            <button type="button" class="font-btn" id="btn-shekasteh" onclick="selectFont('shekasteh')">
+              <div class="font-btn-info">
+                <div class="font-btn-name">شکسته — Shekasteh</div>
+                <div class="font-btn-desc">Cursive & expressive · Artistic</div>
+              </div>
+              <div class="font-btn-prev" id="prev-shekasteh" style="font-family:'Noto Naskh Arabic',serif;">شکسته</div>
+              <div class="font-btn-check"></div>
+            </button>
           </div>
-          <div style="font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-top:6px;" id="color-name-display">Selected: Black</div>
+        </div>
+
+        <!-- Color selector -->
+        <div>
+          <span class="sec-label">Ink Color</span>
+          <div class="color-row">
+            <div class="color-dot active" data-color="#1a1a1a" data-name="Black" style="background:#1a1a1a;" onclick="selectColor(this)" title="Black"></div>
+            <div class="color-dot" data-color="#8B1A1A" data-name="Red" style="background:#8B1A1A;" onclick="selectColor(this)" title="Red"></div>
+            <div class="color-dot" data-color="#1A5C1A" data-name="Green" style="background:#1A5C1A;" onclick="selectColor(this)" title="Green"></div>
+            <div class="color-dot" data-color="#1A3A8B" data-name="Blue" style="background:#1A3A8B;" onclick="selectColor(this)" title="Blue"></div>
+            <div class="color-dot" data-color="#0D1B3E" data-name="Navy Blue" style="background:#0D1B3E;" onclick="selectColor(this)" title="Navy Blue"></div>
+          </div>
+          <div id="color-label" style="font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-top:6px;">Selected: Black</div>
         </div>
 
       </div>
 
-      <!-- PREVIEW -->
-      <div class="calli-preview">
-        <div class="preview-label">Live Preview</div>
+      <!-- RIGHT PREVIEW -->
+      <div class="right-col">
+        <span class="sec-label">Live Preview</span>
 
-        <div class="paper-wrap">
+        <div class="paper-outer">
           <div class="paper">
             <div class="paper-border"></div>
             <div class="paper-corner tl"></div>
             <div class="paper-corner tr"></div>
             <div class="paper-corner bl"></div>
             <div class="paper-corner br"></div>
-            <div id="calli-display" class="calli-text nastaliq" style="color:#1a1a1a;">
-              <span class="placeholder-text">Your name will appear here</span>
+            <div id="preview-text" class="calli-text" style="font-family:'Scheherazade New',serif;color:#1a1a1a;">
+              <span class="placeholder-txt">Your name will appear here</span>
             </div>
           </div>
+          <div class="size-tag">14 x 9 cm · Handwritten</div>
+          <div class="disclaimer">⚠️ Digital preview only. Final handwritten artwork by our calligrapher may vary in style and detail. Each piece is unique.</div>
         </div>
 
-        <div class="size-info">
-          <div class="size-badge">14 x 9 cm</div>
-          <div class="size-note">Premium paper · Handwritten</div>
-        </div>
-
-        <div class="disclaimer">
-          ⚠️ This is a digital preview only. The final handwritten artwork by our calligrapher may vary in style and detail. Each piece is unique and crafted individually with love.
-        </div>
       </div>
 
     </div>
 
-    <div class="gold-line"></div>
+    <div class="gold-bar"></div>
 
-    <!-- BOTTOM ACTIONS -->
-    <div class="calli-bottom">
-      <button id="order-btn" class="btn-order" onclick="placeOrder()" disabled>Place Order — 75 AED</button>
+    <!-- BOTTOM -->
+    <div class="bottom-bar">
+      <button id="order-btn" class="btn-order" onclick="addToCart()" disabled>✦ Add to Cart — 75 AED</button>
       <a id="wa-btn" href="#" class="btn-wa" target="_blank">💬 Ask on WhatsApp</a>
     </div>
 
   </div>
 
-  <!-- Shipping note -->
-  <div style="text-align:center;margin-top:16px;font-size:11px;color:#9A8468;font-family:Arial,sans-serif;line-height:1.7;">
-    Shipping charges apply and will be calculated at checkout · Ships worldwide from Dubai<br/>
-    Production time: 3-5 working days · Free UAE delivery on orders over 365 AED
+  <div style="text-align:center;margin-top:12px;font-size:10px;color:#9A8468;font-family:Arial,sans-serif;line-height:1.8;">
+    Shipping charges apply · Production: 3-5 working days · Ships worldwide from Dubai<br/>
+    Free UAE delivery on orders over 365 AED
   </div>
 
 </div>
 
 <!-- ORDER MODAL -->
-<div class="modal-overlay" id="order-modal">
+<div class="modal-bg" id="order-modal">
   <div class="modal-box">
     <div class="modal-head">
-      <div style="font-size:28px;margin-bottom:8px;">✦</div>
-      <div style="font-size:10px;letter-spacing:0.2em;color:#C9A84C;font-family:Arial,sans-serif;margin-bottom:6px;">ORDER PLACED</div>
-      <div style="font-size:20px;color:#F2E8D5;">Thank you for your order!</div>
+      <div style="font-size:26px;margin-bottom:6px;">✦</div>
+      <div style="font-size:9px;letter-spacing:0.2em;color:#C9A84C;font-family:Arial,sans-serif;margin-bottom:4px;">ORDER CONFIRMED</div>
+      <div style="font-size:18px;color:#F2E8D5;">Added to Cart!</div>
     </div>
     <div class="modal-body">
-      <div id="modal-summary" style="background:#F2E8D5;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;font-family:Arial,sans-serif;color:#1C110A;line-height:1.8;"></div>
-      <p style="font-size:12px;color:#6B5240;font-family:Arial,sans-serif;margin-bottom:14px;text-align:center;">Our team will contact you on WhatsApp to confirm your order and arrange payment and shipping.</p>
-      <a id="modal-wa-btn" href="#" target="_blank" style="display:block;padding:12px;background:linear-gradient(135deg,#C9A84C,#8A5E1A);border-radius:8px;color:#1C110A;font-size:13px;font-weight:bold;text-align:center;text-decoration:none;font-family:Arial,sans-serif;margin-bottom:10px;">Confirm on WhatsApp →</a>
+      <div id="modal-summary" style="background:#F2E8D5;border-radius:10px;padding:14px;margin-bottom:14px;font-size:12px;font-family:Arial,sans-serif;color:#1C110A;line-height:2;"></div>
+      <p style="font-size:11px;color:#6B5240;font-family:Arial,sans-serif;margin-bottom:14px;text-align:center;">Our team will contact you on WhatsApp to confirm payment and shipping.</p>
+      <a href="/cart.php" style="display:block;padding:12px;background:linear-gradient(135deg,#C9A84C,#8A5E1A);border-radius:8px;color:#1C110A;font-size:13px;font-weight:bold;text-align:center;text-decoration:none;font-family:Arial,sans-serif;margin-bottom:8px;">View Cart →</a>
+      <a id="modal-wa" href="#" target="_blank" style="display:block;padding:10px;background:rgba(90,168,118,0.12);border:1px solid rgba(90,168,118,0.3);border-radius:8px;color:#2E7D52;font-size:12px;font-weight:bold;text-align:center;text-decoration:none;font-family:Arial,sans-serif;margin-bottom:8px;">💬 Confirm Details on WhatsApp</a>
       <button onclick="closeModal()" style="width:100%;padding:10px;background:transparent;border:1px solid rgba(201,168,76,0.2);border-radius:8px;color:#9A8468;font-size:12px;cursor:pointer;font-family:Arial,sans-serif;">Close</button>
     </div>
   </div>
 </div>
 
 <script>
-var selectedFont = 'nastaliq';
-var selectedColor = '#1a1a1a';
-var selectedColorName = 'Black';
+var selFont = 'nastaliq';
+var selColor = '#1a1a1a';
+var selColorName = 'Black';
 
-var fontClasses = {
-  nastaliq: 'nastaliq',
-  kufic: 'kufic',
-  shekasteh: 'shekasteh'
+var fontFamilies = {
+  nastaliq: "'Scheherazade New', serif",
+  kufic: "'Noto Kufi Arabic', sans-serif",
+  shekasteh: "'Noto Naskh Arabic', serif"
 };
 
-var fontCSS = {
-  nastaliq: "font-family:'Scheherazade New',serif;",
-  kufic: "font-family:'Amiri',serif;letter-spacing:0.05em;",
-  shekasteh: "font-family:'Amiri',serif;font-style:italic;"
+var fontFullNames = {
+  nastaliq: 'نستعلیق (Nastaliq)',
+  kufic: 'کوفی (Kufic)',
+  shekasteh: 'شکسته نستعلیق (Shekasteh)'
 };
 
-function updatePreview() {
-  var input = document.getElementById('name-input');
-  var display = document.getElementById('calli-display');
-  var charCount = document.getElementById('char-count');
-  var orderBtn = document.getElementById('order-btn');
-  var waBtn = document.getElementById('wa-btn');
-  var text = input.value.trim();
+// Transliteration
+var nameMap = {
+  'ahmed':'أحمد','ahmad':'أحمد','muhammad':'محمد','mohammed':'محمد','mohamed':'محمد',
+  'ali':'علي','omar':'عمر','umar':'عمر','amir':'أمير','ameer':'أمير',
+  'hassan':'حسن','hussain':'حسين','hussein':'حسين','ibrahim':'إبراهيم',
+  'ismail':'إسماعيل','yusuf':'يوسف','adam':'آدم','khalid':'خالد','khaled':'خالد',
+  'faisal':'فيصل','fahad':'فهد','tariq':'طارق','tarek':'طارق','walid':'وليد',
+  'rami':'رامي','sami':'سامي','nabil':'نبيل','karim':'كريم','kareem':'كريم',
+  'malik':'مالك','malek':'مالك','ziad':'زياد','badr':'بدر','faris':'فارس',
+  'hamza':'حمزة','hamzah':'حمزة','bilal':'بلال','salim':'سالم','salem':'سالم',
+  'sara':'سارة','sarah':'سارة','fatima':'فاطمة','fatimah':'فاطمة',
+  'noor':'نور','nur':'نور','layla':'ليلى','leila':'ليلى',
+  'maryam':'مريم','mariam':'مريم','zainab':'زينب','rania':'رانيا','rana':'رانا',
+  'hana':'هناء','nadia':'نادية','huda':'هدى','dina':'دينا',
+  'iman':'إيمان','aisha':'عائشة','ayesha':'عائشة','amina':'أمينة',
+  'yasmin':'ياسمين','jasmine':'ياسمين','lina':'لينا',
+  'david':'داوود','daniel':'دانيال','michael':'ميكائيل','john':'يوحنا',
+  'alex':'أليكس','george':'جورج','peter':'بطرس','mark':'مارك',
+  'anna':'آنا','emma':'إيما','sofia':'صوفيا','sophia':'صوفيا',
+  'anthony':'أنتوني','kevin':'كيفن','ryan':'رايان','jason':'جيسون'
+};
 
-  charCount.textContent = input.value.length + ' / 20 characters';
+var transMap = {
+  'sh':'ش','th':'ث','kh':'خ','dh':'ذ','gh':'غ','aa':'ا',
+  'a':'ا','b':'ب','t':'ت','j':'ج','h':'ح','d':'د','r':'ر',
+  'z':'ز','s':'س','f':'ف','q':'ق','k':'ك','l':'ل','m':'م',
+  'n':'ن','w':'و','y':'ي','e':'ي','o':'و','u':'و','i':'ي',
+  'p':'ب','v':'ف','g':'ج','c':'ك'
+};
 
-  if (text === '') {
-    display.innerHTML = '<span class="placeholder-text">Your name will appear here</span>';
-    orderBtn.disabled = true;
-  } else {
-    display.innerHTML = text;
-    display.style.cssText = 'font-size:clamp(22px,5vw,42px);direction:rtl;text-align:center;padding:10px;line-height:1.4;transition:all 0.3s;word-break:break-word;max-width:100%;color:' + selectedColor + ';' + fontCSS[selectedFont];
-    orderBtn.disabled = false;
-  }
-
-  var waMsg = encodeURIComponent('Hi Craftihouse! I would like to order a custom Arabic calligraphy.\n\nText: ' + (text || '(not entered yet)') + '\nStyle: ' + selectedFont.charAt(0).toUpperCase() + selectedFont.slice(1) + '\nColor: ' + selectedColorName + '\nSize: 14x9 cm\nPrice: 75 AED\n\nPlease confirm and advise on shipping.');
-  waBtn.href = 'https://wa.me/971558513794?text=' + waMsg;
+function transliterate(text) {
+  if (!text) return '';
+  if (/[\u0600-\u06FF]/.test(text)) return text;
+  var lower = text.toLowerCase().trim();
+  if (nameMap[lower]) return nameMap[lower];
+  var words = lower.split(' ');
+  var result = words.map(function(word) {
+    if (nameMap[word]) return nameMap[word];
+    var arabic = '';
+    var i = 0;
+    while (i < word.length) {
+      var two = word.substr(i,2);
+      var one = word.substr(i,1);
+      if (transMap[two]) { arabic += transMap[two]; i += 2; }
+      else if (transMap[one]) { arabic += transMap[one]; i++; }
+      else i++;
+    }
+    return arabic || word;
+  });
+  return result.join(' ');
 }
 
-function selectFont(el) {
-  document.querySelectorAll('.font-opt').forEach(function(o) { o.classList.remove('active'); });
-  el.classList.add('active');
-  selectedFont = el.dataset.font;
-  updatePreview();
+function updateAll() {
+  var inp = document.getElementById('name-inp');
+  var preview = document.getElementById('preview-text');
+  var orderBtn = document.getElementById('order-btn');
+  var waBtn = document.getElementById('wa-btn');
+  var charCount = document.getElementById('char-count');
+  var translitNote = document.getElementById('translit-note');
+  var text = inp.value.trim();
+
+  charCount.textContent = inp.value.length + ' / 25';
+
+  if (!text) {
+    preview.innerHTML = '<span class="placeholder-txt">Your name will appear here</span>';
+    preview.style.fontFamily = fontFamilies[selFont];
+    orderBtn.disabled = true;
+    translitNote.style.display = 'none';
+    waBtn.href = 'https://wa.me/971558513794?text=' + encodeURIComponent('Hi Craftihouse! I would like to order a custom Arabic calligraphy. Please help me.');
+    return;
+  }
+
+  var arabic = transliterate(text);
+  preview.textContent = arabic;
+  preview.style.fontFamily = fontFamilies[selFont];
+  preview.style.color = selColor;
+  preview.style.fontWeight = selFont === 'kufic' ? '700' : '400';
+
+  if (arabic !== text) {
+    translitNote.textContent = 'Arabic preview: ' + arabic;
+    translitNote.style.display = 'block';
+  } else {
+    translitNote.style.display = 'none';
+  }
+
+  orderBtn.disabled = false;
+
+  var msg = 'Hi Craftihouse! I would like to order a custom Arabic calligraphy.\n\n'
+    + 'Text: ' + text + (arabic !== text ? ' (' + arabic + ')' : '') + '\n'
+    + 'Style: ' + fontFullNames[selFont] + '\n'
+    + 'Color: ' + selColorName + '\n'
+    + 'Size: 14x9 cm\n'
+    + 'Price: 75 AED\n\n'
+    + 'Please confirm and advise on shipping.';
+  waBtn.href = 'https://wa.me/971558513794?text=' + encodeURIComponent(msg);
+}
+
+function selectFont(font) {
+  selFont = font;
+  document.querySelectorAll('.font-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('btn-' + font).classList.add('active');
+  updateAll();
 }
 
 function selectColor(el) {
-  document.querySelectorAll('.color-opt').forEach(function(o) { o.classList.remove('active'); });
+  document.querySelectorAll('.color-dot').forEach(function(d) { d.classList.remove('active'); });
   el.classList.add('active');
-  selectedColor = el.dataset.color;
-  selectedColorName = el.dataset.name;
-  document.getElementById('color-name-display').textContent = 'Selected: ' + selectedColorName;
-  updatePreview();
+  selColor = el.dataset.color;
+  selColorName = el.dataset.name;
+  document.getElementById('color-label').textContent = 'Selected: ' + selColorName;
+  updateAll();
 }
 
-function placeOrder() {
-  var text = document.getElementById('name-input').value.trim();
+function addToCart() {
+  var text = document.getElementById('name-inp').value.trim();
   if (!text) return;
+  var arabic = transliterate(text);
+  var orderNote = 'Calligraphy Text: ' + text + (arabic !== text ? ' (' + arabic + ')' : '')
+    + ' | Style: ' + fontFullNames[selFont]
+    + ' | Color: ' + selColorName
+    + ' | Size: 14x9 cm';
 
-  var summary = document.getElementById('modal-summary');
-  summary.innerHTML = '<strong>Text:</strong> ' + text + '<br/>'
-    + '<strong>Style:</strong> ' + selectedFont.charAt(0).toUpperCase() + selectedFont.slice(1) + '<br/>'
-    + '<strong>Color:</strong> ' + selectedColorName + '<br/>'
-    + '<strong>Size:</strong> 14 x 9 cm<br/>'
-    + '<strong>Price:</strong> 75 AED ($20.42 USD)<br/>'
-    + '<strong>Shipping:</strong> Calculated at checkout';
+  // Show loading
+  var btn = document.getElementById('order-btn');
+  btn.textContent = 'Adding to cart...';
+  btn.disabled = true;
 
-  var waMsg = encodeURIComponent('Hi Craftihouse! I would like to order a custom Arabic calligraphy.\n\nText: ' + text + '\nStyle: ' + selectedFont.charAt(0).toUpperCase() + selectedFont.slice(1) + '\nColor: ' + selectedColorName + '\nSize: 14x9 cm\nPrice: 75 AED\n\nPlease confirm and advise on shipping.');
-  document.getElementById('modal-wa-btn').href = 'https://wa.me/971558513794?text=' + waMsg;
-
-  document.getElementById('order-modal').classList.add('show');
+  // Add to BigCommerce cart via API
+  fetch('/api/storefront/carts', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      lineItems: [{
+        productId: 9855,
+        quantity: 1
+      }]
+    })
+  }).then(function(r) { return r.json(); })
+  .then(function(cartData) {
+    var cartId = cartData.id;
+    // Update cart with order note
+    return fetch('/api/storefront/carts/' + cartId, {
+      method: 'PUT',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerMessage: orderNote })
+    });
+  })
+  .then(function() {
+    // Show success modal
+    var arabic2 = transliterate(text);
+    document.getElementById('modal-summary').innerHTML =
+      '<strong>Text:</strong> ' + text + (arabic2 !== text ? ' → ' + arabic2 : '') + '<br/>' +
+      '<strong>Style:</strong> ' + fontFullNames[selFont] + '<br/>' +
+      '<strong>Color:</strong> ' + selColorName + '<br/>' +
+      '<strong>Size:</strong> 14 x 9 cm<br/>' +
+      '<strong>Price:</strong> 75 AED ($20.42 USD)';
+    var msg = 'Hi Craftihouse! I just added a custom Arabic calligraphy to my cart.\n\n'
+      + 'Text: ' + text + (arabic2 !== text ? ' (' + arabic2 + ')' : '') + '\n'
+      + 'Style: ' + fontFullNames[selFont] + '\n'
+      + 'Color: ' + selColorName + '\n'
+      + 'Size: 14x9 cm\n'
+      + 'Price: 75 AED';
+    document.getElementById('modal-wa').href = 'https://wa.me/971558513794?text=' + encodeURIComponent(msg);
+    // Redirect to BigCommerce cart with product 9855 and note
+  var arabicText = transliterate(text);
+  var note = 'Calligraphy Text: ' + text + ' (' + arabicText + ') | Style: ' + selectedFont + ' | Color: ' + selectedColorName + ' | Size: 14x9 cm';
+  window.location.href = '/cart.php?action=add&product_id=9855&note=' + encodeURIComponent(note);
+    btn.textContent = '✔ Added to Cart!';
+  })
+  .catch(function() {
+    // Fallback - redirect to product page
+    window.location.href = '/custom-arabic-calligraphy-handwritten-name-art/?note=' + encodeURIComponent(orderNote);
+  });
 }
 
 function closeModal() {
@@ -330,6 +421,5 @@ document.getElementById('order-modal').onclick = function(e) {
   if (e.target === this) closeModal();
 };
 </script>
-
 </body>
 </html>
