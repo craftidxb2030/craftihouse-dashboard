@@ -398,8 +398,11 @@ function chRenderCI(id, data) {
   el.id = 'chci-' + id;
   el.className = 'ch-ci' + (id === chSessId ? ' sel' : '');
   el.style.position = 'relative';
+  var country = data.country || (chSessions[id] && chSessions[id].country) || '';
+  var flag = data.flag || '';
+  var flagEmoji = flag && flag.length === 2 ? getFlagEmoji(flag) : '';
   el.innerHTML = '<div class="ch-ci-name">' + name + (data.unreadByAgent && id !== chSessId ? '<span class="ch-unread"></span>' : '') + '</div>' +
-    '<div class="ch-ci-email">' + (c.email || '') + '</div>' +
+    '<div class="ch-ci-email">' + (c.email || '') + (country ? ' · ' + flagEmoji + ' ' + country : '') + '</div>' +
     (data.lastMessage ? '<div class="ch-ci-prev">' + data.lastMessage + '</div>' : '') +
     (c.topic ? '<div class="ch-ci-topic">· ' + c.topic + '</div>' : '') +
     '<button class="ch-del-btn" data-id="' + id + '" title="Delete conversation" style="position:absolute;top:8px;right:8px;background:rgba(139,26,26,0.7);border:none;border-radius:5px;color:#fff;width:22px;height:22px;font-size:11px;cursor:pointer;z-index:10;font-family:Arial,sans-serif;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;">🗑</button>';
