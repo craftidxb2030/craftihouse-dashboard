@@ -28,7 +28,7 @@ body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;min-height:100vh
 .hint{font-size:10px;color:#C9A84C;font-family:Arial,sans-serif;margin-top:4px;text-align:center;min-height:14px;}
 .font-btns{display:flex;flex-direction:column;gap:6px;}
 .font-btn{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:9px;cursor:pointer;transition:all 0.2s;}
-.font-btn:hover,.font-btn.active{background:rgba(201,168,76,0.1);border-color:#C9A84C;}
+.font-btn:hover{background:rgba(201,168,76,0.08);border-color:#C9A84C;}.font-btn.active{background:linear-gradient(135deg,#C9A84C,#8A5E1A);border-color:#C9A84C;color:#1C110A;}
 .font-btn-label{font-size:11px;color:#1C110A;font-family:Arial,sans-serif;font-weight:bold;}
 .font-btn-sub{font-size:9px;color:#9A8468;font-family:Arial,sans-serif;}
 .font-preview{font-size:18px;color:#1C110A;}
@@ -37,7 +37,7 @@ body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;min-height:100vh
 .color-dots{display:flex;gap:8px;flex-wrap:wrap;}
 .color-dot{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;position:relative;}
 .color-dot:hover{transform:scale(1.1);}
-.color-dot.active{border-color:#C9A84C;transform:scale(1.15);}
+.color-dot.active{border-color:#C9A84C;transform:scale(1.2);box-shadow:0 0 0 3px rgba(201,168,76,0.3);}
 .color-dot.active::after{content:'checkmark';font-size:0;position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,0.6);}
 .color-name{font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-top:5px;}
 .preview-side{padding:20px;display:flex;flex-direction:column;}
@@ -116,6 +116,20 @@ body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;min-height:100vh
           <div id="color-name" class="color-name">Black</div>
         </div>
 
+        <div class="section">
+          <span class="label">Framing</span>
+          <div style="display:flex;gap:8px;">
+            <div id="frame-no" onclick="selectFrame('none',this)" style="flex:1;padding:10px 12px;background:linear-gradient(135deg,#C9A84C,#8A5E1A);border:1.5px solid #C9A84C;border-radius:9px;cursor:pointer;text-align:center;transition:all 0.2s;">
+              <div style="font-size:12px;font-weight:bold;color:#1C110A;font-family:Arial,sans-serif;">No Frame</div>
+              <div style="font-size:10px;color:#3D200E;font-family:Arial,sans-serif;">75 AED</div>
+            </div>
+            <div id="frame-yes" onclick="selectFrame('standard',this)" style="flex:1;padding:10px 12px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:9px;cursor:pointer;text-align:center;transition:all 0.2s;">
+              <div style="font-size:12px;font-weight:bold;color:#3D200E;font-family:Arial,sans-serif;">Standard Frame</div>
+              <div style="font-size:10px;color:#9A8468;font-family:Arial,sans-serif;">+55 AED ($14.97)</div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="preview-side">
@@ -156,6 +170,8 @@ body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;min-height:100vh
 var selFont = 'nastaliq';
 var selColor = '#1a1a1a';
 var selColorName = 'Black';
+var selFrame = 'none';
+var frameValues = { 'none': '340', 'standard': '341' };
 
 var fontCSS = {
   nastaliq: "font-family:'Scheherazade New',serif;",
@@ -280,6 +296,27 @@ function selectColor(el) {
 var fontValues = { nastaliq: '313', kufic: '314', shekasteh: '315' };
 var colorValues = { 'Black': '316', 'Red': '317', 'Green': '318', 'Blue': '319', 'Navy Blue': '320' };
 
+function selectFrame(frame, el) {
+  selFrame = frame;
+  var noFrame = document.getElementById('frame-no');
+  var yesFrame = document.getElementById('frame-yes');
+  if (frame === 'none') {
+    noFrame.style.background = 'linear-gradient(135deg,#C9A84C,#8A5E1A)';
+    noFrame.style.borderColor = '#C9A84C';
+    noFrame.querySelector('div').style.color = '#1C110A';
+    yesFrame.style.background = '#F2E8D5';
+    yesFrame.style.borderColor = '#E8D9BF';
+    yesFrame.querySelector('div').style.color = '#3D200E';
+  } else {
+    yesFrame.style.background = 'linear-gradient(135deg,#C9A84C,#8A5E1A)';
+    yesFrame.style.borderColor = '#C9A84C';
+    yesFrame.querySelector('div').style.color = '#1C110A';
+    noFrame.style.background = '#F2E8D5';
+    noFrame.style.borderColor = '#E8D9BF';
+    noFrame.querySelector('div').style.color = '#3D200E';
+  }
+}
+
 function doOrder() {
   var text = document.getElementById('name-inp').value.trim();
   if (!text) { alert('Please enter your name first.'); return; }
@@ -292,10 +329,12 @@ function doOrder() {
   var fontVal = fontValues[selFont] || '313';
   var colorVal = colorValues[selColorName] || '316';
 
+  var frameVal = frameValues[selFrame] || '340';
   var url = 'https://craftihouse.com/cart.php?action=add&product_id=9855'
     + '&attribute%5B180%5D=' + encodeURIComponent(nameVal)
     + '&attribute%5B181%5D=' + fontVal
-    + '&attribute%5B182%5D=' + colorVal;
+    + '&attribute%5B182%5D=' + colorVal
+    + '&attribute%5B193%5D=' + frameVal;
 
   window.location.href = url;
 }
