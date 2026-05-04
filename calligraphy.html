@@ -277,6 +277,9 @@ function selectColor(el) {
   onNameInput();
 }
 
+var fontValues = { nastaliq: '313', kufic: '314', shekasteh: '315' };
+var colorValues = { 'Black': '316', 'Red': '317', 'Green': '318', 'Blue': '319', 'Navy Blue': '320' };
+
 function doOrder() {
   var text = document.getElementById('name-inp').value.trim();
   if (!text) { alert('Please enter your name first.'); return; }
@@ -285,16 +288,16 @@ function doOrder() {
   btn.textContent = 'Adding to cart...';
   btn.disabled = true;
 
-  // Save selections to localStorage so customer can see them in cart
-  try {
-    localStorage.setItem('calli_name', text);
-    localStorage.setItem('calli_arabic', arabic);
-    localStorage.setItem('calli_font', fontNames[selFont]);
-    localStorage.setItem('calli_color', selColorName);
-  } catch(e) {}
+  var nameVal = text + (arabic !== text ? ' (' + arabic + ')' : '');
+  var fontVal = fontValues[selFont] || '313';
+  var colorVal = colorValues[selColorName] || '316';
 
-  // Go to product page so customer can fill in the options
-  window.location.href = 'https://craftihouse.com/custom-arabic-calligraphy-handwritten-name-art/';
+  var url = 'https://craftihouse.com/cart.php?action=add&product_id=9855'
+    + '&attribute%5B180%5D=' + encodeURIComponent(nameVal)
+    + '&attribute%5B181%5D=' + fontVal
+    + '&attribute%5B182%5D=' + colorVal;
+
+  window.location.href = url;
 }
 </script>
 </body>
