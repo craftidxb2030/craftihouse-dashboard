@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Custom Portrait Painting | Craftihouse Dubai</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;min-height:100vh;}
+.wrap{max-width:900px;margin:0 auto;padding:24px 16px;}
+.header{text-align:center;margin-bottom:24px;}
+.header h1{font-size:26px;font-weight:normal;color:#1C110A;margin-bottom:6px;}
+.header p{font-size:12px;color:#6B5240;font-family:Arial,sans-serif;line-height:1.6;}
+.card{background:#FDF8F0;border-radius:18px;overflow:hidden;box-shadow:0 6px 32px rgba(28,17,10,0.1);}
+.card-top{background:linear-gradient(160deg,#1C110A,#3D200E);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.card-top .brand{color:#E8C97A;font-size:15px;}
+.price-tag{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:5px 14px;color:#E8C97A;font-size:13px;font-family:Arial,sans-serif;font-weight:bold;}
+.gold-line{height:3px;background:linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C);}
+.card-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media(max-width:640px){.card-body{grid-template-columns:1fr;}}
+.controls{padding:22px;border-right:1px solid #EDE3D0;}
+@media(max-width:640px){.controls{border-right:none;border-bottom:1px solid #EDE3D0;}}
+.label{font-size:9px;letter-spacing:0.18em;color:#9A8468;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:7px;display:block;}
+.section{margin-bottom:18px;}
+
+/* Upload area */
+.upload-area{border:2px dashed rgba(201,168,76,0.4);border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:rgba(201,168,76,0.03);transition:all 0.2s;position:relative;}
+.upload-area:hover{background:rgba(201,168,76,0.07);border-color:#C9A84C;}
+.upload-area.has-photo{border-style:solid;border-color:rgba(90,168,118,0.5);background:rgba(90,168,118,0.05);}
+.upload-icon{font-size:28px;margin-bottom:6px;}
+.upload-text{font-size:12px;color:#E8C97A;font-family:Arial,sans-serif;}
+.upload-sub{font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-top:3px;}
+
+/* Option buttons */
+.opt-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.opt-btn{padding:10px 6px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:9px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.opt-btn:hover,.opt-btn.active{background:rgba(201,168,76,0.1);border-color:#C9A84C;}
+.opt-btn-icon{font-size:18px;margin-bottom:4px;}
+.opt-btn-name{font-size:11px;color:#1C110A;font-family:Arial,sans-serif;font-weight:bold;}
+.opt-btn-price{font-size:10px;color:#C9A84C;font-family:Arial,sans-serif;margin-top:2px;}
+.opt-btn.active .opt-btn-name{color:#8A5E1A;}
+
+/* Size buttons */
+.size-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.size-btn{padding:10px 6px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:9px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.size-btn:hover,.size-btn.active{background:rgba(201,168,76,0.1);border-color:#C9A84C;}
+.size-btn-name{font-size:12px;color:#1C110A;font-family:Arial,sans-serif;font-weight:bold;}
+.size-btn-dim{font-size:9px;color:#9A8468;font-family:Arial,sans-serif;margin-top:2px;}
+
+/* Frame toggle */
+.frame-opts{display:flex;gap:8px;}
+.frame-btn{flex:1;padding:10px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:9px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.frame-btn:hover,.frame-btn.active{background:rgba(201,168,76,0.1);border-color:#C9A84C;}
+.frame-btn-name{font-size:11px;color:#1C110A;font-family:Arial,sans-serif;font-weight:bold;}
+.frame-btn-price{font-size:10px;color:#C9A84C;font-family:Arial,sans-serif;margin-top:2px;}
+
+/* Notes */
+.notes-inp{width:100%;padding:9px 12px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:9px;font-size:12px;color:#1C110A;outline:none;font-family:Arial,sans-serif;resize:vertical;min-height:60px;}
+.notes-inp:focus{border-color:#C9A84C;}
+
+/* Preview side */
+.preview-side{padding:22px;display:flex;flex-direction:column;gap:14px;}
+.canvas-wrap{flex:1;background:#F2E8D5;border-radius:12px;border:1px solid #E8D9BF;display:flex;align-items:center;justify-content:center;min-height:220px;position:relative;overflow:hidden;}
+.preview-img{width:100%;height:100%;object-fit:contain;border-radius:8px;display:none;}
+.preview-placeholder{text-align:center;padding:20px;}
+.preview-placeholder-icon{font-size:40px;opacity:0.2;margin-bottom:8px;}
+.preview-placeholder-text{font-size:11px;color:#9A8468;font-family:Arial,sans-serif;}
+
+/* Frame overlay */
+.frame-overlay{position:absolute;inset:0;pointer-events:none;border-radius:8px;}
+.frame-overlay.show{box-shadow:inset 0 0 0 10px rgba(139,90,43,0.6),inset 0 0 0 12px rgba(201,168,76,0.3);}
+
+/* Style overlay */
+.style-overlay{position:absolute;inset:0;pointer-events:none;border-radius:8px;transition:all 0.3s;}
+.style-overlay.charcoal{background:rgba(0,0,0,0);mix-blend-mode:saturation;filter:grayscale(100%) contrast(1.1);}
+.style-overlay.acrylic{filter:saturate(1.3) contrast(1.05);}
+.style-overlay.oil{filter:saturate(0.9) contrast(1.1) brightness(0.95);}
+
+/* Price display */
+.price-display{background:linear-gradient(160deg,#1C110A,#3D200E);border-radius:12px;padding:14px 18px;}
+.price-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.price-label{font-size:11px;color:rgba(232,201,122,0.7);font-family:Arial,sans-serif;}
+.price-val{font-size:11px;color:#E8C97A;font-family:Arial,sans-serif;}
+.price-total-row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(201,168,76,0.2);padding-top:8px;margin-top:4px;}
+.price-total-label{font-size:13px;color:#E8C97A;font-family:Arial,sans-serif;font-weight:bold;}
+.price-total-val{font-size:20px;color:#C9A84C;font-family:Arial,sans-serif;font-weight:bold;}
+
+.disclaimer{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:10px 13px;font-size:10px;color:#6B5240;font-family:Arial,sans-serif;line-height:1.6;text-align:center;}
+
+/* Footer */
+.card-footer{padding:16px 22px;border-top:1px solid #EDE3D0;display:flex;gap:10px;flex-wrap:wrap;}
+.btn-order{flex:2;padding:13px;background:linear-gradient(135deg,#C9A84C,#8A5E1A);border:none;border-radius:9px;color:#1C110A;font-size:13px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-order:disabled{opacity:0.35;cursor:not-allowed;}
+.btn-wa{flex:1;padding:13px;background:rgba(90,168,118,0.1);border:1px solid rgba(90,168,118,0.28);border-radius:9px;color:#2E7D52;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center;gap:5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div style="font-size:9px;letter-spacing:0.25em;color:#C9A84C;font-family:Arial,sans-serif;margin-bottom:6px;">CRAFTIHOUSE.COM · EST. 2003</div>
+    <h1>Custom Portrait Painting</h1>
+    <p>Order a handmade portrait painting by our professional artist in Dubai.<br/>Charcoal, Acrylic or Oil — crafted individually and shipped worldwide.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-top">
+      <div class="brand">Custom Portrait Painting Order</div>
+      <div id="top-price" class="price-tag">From $68.03</div>
+    </div>
+    <div class="gold-line"></div>
+
+    <div class="card-body">
+      <div class="controls">
+
+        <!-- Upload Photo -->
+        <div class="section">
+          <span class="label">Step 1 — Upload Your Photo</span>
+          <div class="upload-area" id="upload-area" onclick="document.getElementById('photo-inp').click()">
+            <div class="upload-icon" id="upload-icon">📷</div>
+            <div class="upload-text" id="upload-text">Tap to upload your photo</div>
+            <div class="upload-sub" id="upload-sub">JPG or PNG — clear photo recommended</div>
+          </div>
+          <input type="file" id="photo-inp" accept="image/*" style="display:none;" onchange="onPhotoUpload(this)"/>
+        </div>
+
+        <!-- Painting Medium -->
+        <div class="section">
+          <span class="label">Step 2 — Painting Medium</span>
+          <div class="opt-grid">
+            <div class="opt-btn active" onclick="selectMedium('charcoal',this)">
+              <div class="opt-btn-icon">✏️</div>
+              <div class="opt-btn-name">Charcoal</div>
+              <div class="opt-btn-price">From $68</div>
+            </div>
+            <div class="opt-btn" onclick="selectMedium('acrylic',this)">
+              <div class="opt-btn-icon">🎨</div>
+              <div class="opt-btn-name">Acrylic</div>
+              <div class="opt-btn-price">From $82</div>
+            </div>
+            <div class="opt-btn" onclick="selectMedium('oil',this)">
+              <div class="opt-btn-icon">🖼</div>
+              <div class="opt-btn-name">Oil</div>
+              <div class="opt-btn-price">From $231</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Size -->
+        <div class="section">
+          <span class="label">Step 3 — Size</span>
+          <div class="size-grid">
+            <div class="size-btn active" onclick="selectSize('a4',this)">
+              <div class="size-btn-name">A4</div>
+              <div class="size-btn-dim">21x29 cm</div>
+            </div>
+            <div class="size-btn" onclick="selectSize('a3',this)">
+              <div class="size-btn-name">A3</div>
+              <div class="size-btn-dim">29x42 cm</div>
+            </div>
+            <div class="size-btn" onclick="selectSize('30x40',this)">
+              <div class="size-btn-name">30x40</div>
+              <div class="size-btn-dim">30x40 cm</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Framing -->
+        <div class="section">
+          <span class="label">Step 4 — Framing (Optional)</span>
+          <div class="frame-opts">
+            <div class="frame-btn active" onclick="selectFrame('none',this)">
+              <div class="frame-btn-name">No Frame</div>
+              <div class="frame-btn-price">Included</div>
+            </div>
+            <div class="frame-btn" onclick="selectFrame('standard',this)">
+              <div class="frame-btn-name">Standard Frame</div>
+              <div id="frame-price-label" class="frame-btn-price">+$14.97</div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-top:6px;">For special framing — <a href="https://wa.me/971558513794" target="_blank" style="color:#C9A84C;">contact us on WhatsApp</a></div>
+        </div>
+
+        <!-- Notes -->
+        <div class="section">
+          <span class="label">Special Instructions (Optional)</span>
+          <textarea id="notes-inp" class="notes-inp" placeholder="Any special instructions for the artist..."></textarea>
+        </div>
+
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="preview-side">
+        <span class="label">Live Preview</span>
+
+        <div class="canvas-wrap" id="canvas-wrap">
+          <img id="preview-img" class="preview-img" src="" alt="Your portrait"/>
+          <div id="style-overlay" class="style-overlay charcoal"></div>
+          <div id="frame-overlay" class="frame-overlay"></div>
+          <div class="preview-placeholder" id="preview-placeholder">
+            <div class="preview-placeholder-icon">🖼</div>
+            <div class="preview-placeholder-text">Upload your photo to see a preview</div>
+          </div>
+        </div>
+
+        <!-- Price breakdown -->
+        <div class="price-display">
+          <div class="price-row">
+            <span class="price-label">Painting (<span id="pr-medium">Charcoal</span> / <span id="pr-size">A4</span>)</span>
+            <span class="price-val" id="pr-painting">$68.03</span>
+          </div>
+          <div class="price-row" id="pr-frame-row" style="display:none;">
+            <span class="price-label">Standard Frame</span>
+            <span class="price-val" id="pr-frame">$14.97</span>
+          </div>
+          <div class="price-total-row">
+            <span class="price-total-label">Total</span>
+            <span class="price-total-val" id="pr-total">$68.03</span>
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          Preview is for reference only. The final handpainted artwork by our artist will be individually crafted and may vary slightly from the digital preview.
+        </div>
+      </div>
+    </div>
+
+    <div class="gold-line"></div>
+
+    <div class="card-footer">
+      <button id="order-btn" class="btn-order" onclick="doOrder()">Add to Cart — <span id="btn-price">$68.03</span></button>
+      <a id="wa-link" href="https://wa.me/971558513794?text=Hi Craftihouse! I want to order a custom portrait painting." class="btn-wa" target="_blank">💬 WhatsApp</a>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:14px;font-size:11px;color:#9A8468;font-family:Arial,sans-serif;line-height:1.8;">
+    Send your photo via WhatsApp after ordering · Production: 7-14 working days<br/>
+    Ships worldwide from Dubai · Free UAE delivery on orders over 365 AED<br/>
+    Need larger size? <a href="https://wa.me/971558513794" target="_blank" style="color:#C9A84C;">Contact us for custom quote</a>
+  </div>
+</div>
+
+<script>
+var selMedium = 'charcoal';
+var selSize = 'a4';
+var selFrame = 'none';
+
+var prices = {
+  charcoal: { a4: 68.03, a3: 102.04, '30x40': 136.05 },
+  acrylic:  { a4: 81.63, a3: 122.45, '30x40': 163.27 },
+  oil:      { a4: 231.29, a3: 346.94, '30x40': 462.59 }
+};
+
+var framePrices = { a4: 14.97, a3: 24.49, '30x40': 36.73 };
+
+var mediumAttr = { charcoal: '334', acrylic: '335', oil: '336' };
+var sizeAttr = { a4: '331', a3: '332', '30x40': '333' };
+var frameAttr = { none: '337', standard: '338' };
+
+var mediumNames = { charcoal: 'Charcoal', acrylic: 'Acrylic', oil: 'Oil Painting' };
+var sizeNames = { a4: 'A4', a3: 'A3', '30x40': '30x40 cm' };
+
+function getPrice() {
+  var base = prices[selMedium][selSize];
+  var frame = selFrame === 'standard' ? framePrices[selSize] : 0;
+  return { base: base, frame: frame, total: base + frame };
+}
+
+function updatePrice() {
+  var p = getPrice();
+  document.getElementById('pr-painting').textContent = '$' + p.base.toFixed(2);
+  document.getElementById('pr-medium').textContent = mediumNames[selMedium];
+  document.getElementById('pr-size').textContent = sizeNames[selSize];
+  document.getElementById('pr-total').textContent = '$' + p.total.toFixed(2);
+  document.getElementById('btn-price').textContent = '$' + p.total.toFixed(2);
+  document.getElementById('top-price').textContent = '$' + p.total.toFixed(2);
+
+  var frameRow = document.getElementById('pr-frame-row');
+  var frameLabel = document.getElementById('frame-price-label');
+  if (selFrame === 'standard') {
+    frameRow.style.display = 'flex';
+    document.getElementById('pr-frame').textContent = '$' + p.frame.toFixed(2);
+    frameLabel.textContent = '+$' + framePrices[selSize].toFixed(2);
+  } else {
+    frameRow.style.display = 'none';
+    frameLabel.textContent = '+$' + framePrices[selSize].toFixed(2);
+  }
+
+  updateWaLink();
+}
+
+function updateWaLink() {
+  var p = getPrice();
+  var notes = document.getElementById('notes-inp').value.trim();
+  var msg = 'Hi Craftihouse! I want to order a custom portrait painting.'
+    + '\n\nMedium: ' + mediumNames[selMedium]
+    + '\nSize: ' + sizeNames[selSize]
+    + '\nFrame: ' + (selFrame === 'standard' ? 'Standard Frame' : 'No Frame')
+    + '\nTotal: $' + p.total.toFixed(2)
+    + (notes ? '\nInstructions: ' + notes : '')
+    + '\n\nI will send my photo after confirmation.';
+  document.getElementById('wa-link').href = 'https://wa.me/971558513794?text=' + encodeURIComponent(msg);
+}
+
+function selectMedium(medium, el) {
+  selMedium = medium;
+  document.querySelectorAll('.opt-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  updateStyleOverlay();
+  updatePrice();
+}
+
+function selectSize(size, el) {
+  selSize = size;
+  document.querySelectorAll('.size-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  updatePrice();
+}
+
+function selectFrame(frame, el) {
+  selFrame = frame;
+  document.querySelectorAll('.frame-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  var frameOverlay = document.getElementById('frame-overlay');
+  if (frame === 'standard') {
+    frameOverlay.classList.add('show');
+  } else {
+    frameOverlay.classList.remove('show');
+  }
+  updatePrice();
+}
+
+function updateStyleOverlay() {
+  var overlay = document.getElementById('style-overlay');
+  overlay.className = 'style-overlay ' + selMedium;
+}
+
+function onPhotoUpload(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = document.getElementById('preview-img');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('preview-placeholder').style.display = 'none';
+    document.getElementById('upload-area').classList.add('has-photo');
+    document.getElementById('upload-icon').textContent = 'checkmark';
+    document.getElementById('upload-icon').style.fontSize = '12px';
+    document.getElementById('upload-icon').textContent = 'Photo uploaded';
+    document.getElementById('upload-icon').style.cssText = 'font-size:20px;color:#5AA876;';
+    document.getElementById('upload-icon').textContent = 'checkmark';
+
+    var ua = document.getElementById('upload-area');
+    ua.innerHTML = '<div style="font-size:20px;color:#5AA876;margin-bottom:4px;">&#10003;</div>'
+      + '<div style="font-size:12px;color:#5AA876;font-family:Arial,sans-serif;font-weight:bold;">Photo uploaded successfully</div>'
+      + '<div style="font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-top:3px;">Tap to change photo</div>';
+    ua.onclick = function() { document.getElementById('photo-inp').click(); };
+  };
+  reader.readAsDataURL(file);
+}
+
+function doOrder() {
+  var notes = document.getElementById('notes-inp').value.trim();
+  var p = getPrice();
+
+  var url = 'https://craftihouse.com/cart.php?action=add&product_id=9860'
+    + '&attribute%5B190%5D=' + sizeAttr[selSize]
+    + '&attribute%5B191%5D=' + mediumAttr[selMedium]
+    + '&attribute%5B192%5D=' + frameAttr[selFrame];
+
+  var btn = document.getElementById('order-btn');
+  btn.textContent = 'Adding to cart...';
+  btn.disabled = true;
+
+  window.location.href = url;
+}
+
+document.getElementById('notes-inp').oninput = updateWaLink;
+updatePrice();
+</script>
+</body>
+</html>
