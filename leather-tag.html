@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Personalized Leather Luggage Tag with Arabic Calligraphy | Craftihouse Dubai</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#F5EFE6;font-family:Georgia,serif;color:#1C110A;min-height:100vh;}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px;}
+.header{text-align:center;margin-bottom:24px;}
+.header h1{font-size:24px;font-weight:normal;color:#1C110A;margin-bottom:6px;}
+.header p{font-size:12px;color:#6B5240;font-family:Arial,sans-serif;line-height:1.6;}
+.card{background:#FDF8F0;border-radius:18px;overflow:hidden;box-shadow:0 6px 32px rgba(28,17,10,0.1);}
+.card-top{background:linear-gradient(160deg,#1C110A,#3D200E);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.card-top .brand{color:#E8C97A;font-size:15px;}
+.card-top .price{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:5px 14px;color:#E8C97A;font-size:12px;font-family:Arial,sans-serif;font-weight:bold;}
+.gold-line{height:3px;background:linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C);}
+.card-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media(max-width:600px){.card-body{grid-template-columns:1fr;}}
+.controls{padding:20px;border-right:1px solid #EDE3D0;}
+@media(max-width:600px){.controls{border-right:none;border-bottom:1px solid #EDE3D0;}}
+.label{font-size:9px;letter-spacing:0.18em;color:#9A8468;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:7px;display:block;}
+.section{margin-bottom:18px;}
+.name-inp{width:100%;padding:10px 13px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:9px;font-size:14px;color:#1C110A;outline:none;font-family:'Amiri',serif;text-align:center;}
+.name-inp:focus{border-color:#C9A84C;}
+.hint{font-size:10px;color:#C9A84C;font-family:Arial,sans-serif;margin-top:4px;text-align:center;min-height:14px;}
+.font-btns{display:flex;flex-direction:column;gap:6px;}
+.font-btn{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#F2E8D5;border:1.5px solid #E8D9BF;border-radius:9px;cursor:pointer;transition:all 0.2s;}
+.font-btn:hover{background:rgba(201,168,76,0.08);border-color:#C9A84C;}
+.font-btn.active{background:linear-gradient(135deg,#C9A84C,#8A5E1A);border-color:#C9A84C;}
+.font-btn.active .font-btn-label{color:#1C110A;}
+.font-btn.active .font-btn-sub{color:#3D200E;}
+.font-btn.active .font-preview{color:#1C110A;}
+.font-btn-label{font-size:11px;color:#1C110A;font-family:Arial,sans-serif;font-weight:bold;margin-bottom:2px;}
+.font-btn-sub{font-size:9px;color:#9A8468;font-family:Arial,sans-serif;}
+.font-preview{font-size:18px;color:#1C110A;}
+.font-check{width:14px;height:14px;border-radius:50%;border:2px solid #C9A84C;flex-shrink:0;}
+.font-btn.active .font-check{background:#1C110A;border-color:#1C110A;}
+.color-dots{display:flex;gap:8px;flex-wrap:wrap;}
+.color-dot{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;}
+.color-dot:hover{transform:scale(1.1);}
+.color-dot.active{border-color:#C9A84C;transform:scale(1.2);box-shadow:0 0 0 3px rgba(201,168,76,0.3);}
+.color-name{font-size:10px;color:#9A8468;font-family:Arial,sans-serif;margin-top:5px;}
+.preview-side{padding:20px;display:flex;flex-direction:column;}
+.tag-wrap{flex:1;display:flex;align-items:center;justify-content:center;background:#F2E8D5;border-radius:11px;border:1px solid #E8D9BF;padding:16px;min-height:200px;}
+.leather-tag{width:220px;height:143px;background:linear-gradient(135deg,#5C3317,#3D1F0A);border-radius:12px;box-shadow:0 8px 24px rgba(28,17,10,0.3),inset 0 1px 0 rgba(255,255,255,0.1);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.leather-tag::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(255,255,255,0.02) 2px,rgba(255,255,255,0.02) 4px);pointer-events:none;}
+.leather-tag::after{content:'';position:absolute;top:6px;left:6px;right:6px;bottom:6px;border:1px solid rgba(201,168,76,0.2);border-radius:8px;pointer-events:none;}
+.tag-hole{width:14px;height:14px;border-radius:50%;background:#1C110A;border:2px solid rgba(201,168,76,0.4);position:absolute;top:10px;left:50%;transform:translateX(-50%);}
+.tag-text{font-size:clamp(16px,4vw,28px);text-align:center;padding:8px 16px;line-height:1.4;direction:rtl;word-break:break-word;max-width:100%;transition:all 0.3s;margin-top:8px;}
+.tag-placeholder{font-size:11px;color:rgba(201,168,76,0.4);font-family:Arial,sans-serif;text-align:center;}
+.tag-brand{position:absolute;bottom:8px;font-size:8px;letter-spacing:0.15em;color:rgba(201,168,76,0.3);font-family:Arial,sans-serif;}
+.size-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;}
+.size-badge{background:#1C110A;color:#E8C97A;font-size:10px;font-family:Arial,sans-serif;padding:3px 10px;border-radius:20px;}
+.disclaimer{background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.18);border-radius:8px;padding:9px 12px;margin-top:12px;font-size:10px;color:#6B5240;font-family:Arial,sans-serif;line-height:1.6;text-align:center;}
+.card-footer{padding:16px 20px;border-top:1px solid #EDE3D0;display:flex;gap:10px;flex-wrap:wrap;}
+.btn-cart{flex:2;padding:12px;background:linear-gradient(135deg,#C9A84C,#8A5E1A);border:none;border-radius:9px;color:#1C110A;font-size:13px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-cart:disabled{opacity:0.35;cursor:not-allowed;}
+.btn-wa{flex:1;padding:12px;background:rgba(90,168,118,0.1);border:1px solid rgba(90,168,118,0.28);border-radius:9px;color:#2E7D52;font-size:12px;font-weight:bold;text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div style="font-size:9px;letter-spacing:0.25em;color:#C9A84C;font-family:Arial,sans-serif;margin-bottom:6px;">CRAFTIHOUSE.COM · EST. 2003</div>
+    <h1>Personalized Leather Luggage Tag</h1>
+    <p>Handcrafted dark brown leather tag with your name in authentic Arabic calligraphy.<br/>Perfect for travel, weddings, graduations and corporate gifts. Ships from Dubai in 3 days.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-top">
+      <div class="brand">Custom Leather Luggage Tag · 11x7 cm</div>
+      <div class="price">150 AED · $40.84</div>
+    </div>
+    <div class="gold-line"></div>
+
+    <div class="card-body">
+      <div class="controls">
+
+        <div class="section">
+          <span class="label">Your Name or Text</span>
+          <input id="name-inp" class="name-inp" type="text" placeholder="Type your name..." maxlength="20" oninput="onNameInput()"/>
+          <div id="arabic-hint" class="hint"></div>
+        </div>
+
+        <div class="section">
+          <span class="label">Calligraphy Style</span>
+          <div class="font-btns">
+            <div class="font-btn active" onclick="selectFont('nastaliq',this)">
+              <div><div class="font-btn-label">نستعلیق — Nastaliq</div><div class="font-btn-sub">Flowing and elegant</div></div>
+              <span class="font-preview" style="font-family:'Scheherazade New',serif;">نستعلیق</span>
+              <div class="font-check"></div>
+            </div>
+            <div class="font-btn" onclick="selectFont('kufic',this)">
+              <div><div class="font-btn-label">کوفی — Kufic</div><div class="font-btn-sub">Geometric and classic</div></div>
+              <span class="font-preview" style="font-family:'Amiri',serif;">كوفي</span>
+              <div class="font-check"></div>
+            </div>
+            <div class="font-btn" onclick="selectFont('shekasteh',this)">
+              <div><div class="font-btn-label">شکسته نستعلیق</div><div class="font-btn-sub">Artistic and expressive</div></div>
+              <span class="font-preview" style="font-family:'Amiri',serif;font-style:italic;">شکسته</span>
+              <div class="font-check"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <span class="label">Ink Color</span>
+          <div class="color-dots">
+            <div class="color-dot active" style="background:#1a1a1a;" data-color="#1a1a1a" data-name="Black" onclick="selectColor(this)" title="Black"></div>
+            <div class="color-dot" style="background:#8B1A1A;" data-color="#8B1A1A" data-name="Red" onclick="selectColor(this)" title="Red"></div>
+            <div class="color-dot" style="background:#1A5C1A;" data-color="#1A5C1A" data-name="Green" onclick="selectColor(this)" title="Green"></div>
+            <div class="color-dot" style="background:#1A3A8B;" data-color="#1A3A8B" data-name="Blue" onclick="selectColor(this)" title="Blue"></div>
+            <div class="color-dot" style="background:#0D1B3E;" data-color="#0D1B3E" data-name="Navy Blue" onclick="selectColor(this)" title="Navy Blue"></div>
+          </div>
+          <div id="color-name" class="color-name">Black</div>
+        </div>
+
+      </div>
+
+      <div class="preview-side">
+        <span class="label">Live Preview</span>
+        <div class="tag-wrap">
+          <div class="leather-tag">
+            <div class="tag-hole"></div>
+            <div id="preview-text" class="tag-text" style="font-family:'Scheherazade New',serif;color:#C9A84C;">
+              <span class="tag-placeholder">Your name here</span>
+            </div>
+            <div class="tag-brand">CRAFTIHOUSE · DUBAI</div>
+          </div>
+        </div>
+        <div class="size-row">
+          <div class="size-badge">11 x 7 cm</div>
+          <span style="font-size:10px;color:#9A8468;font-family:Arial,sans-serif;">Dark Brown Leather · 3 days</span>
+        </div>
+        <div class="disclaimer">Preview is digital only. Final handwritten calligraphy may vary — each piece is uniquely crafted by our calligrapher.</div>
+      </div>
+    </div>
+
+    <div class="gold-line"></div>
+
+    <div class="card-footer">
+      <button id="order-btn" class="btn-cart" onclick="doOrder()" disabled>Add to Cart — 150 AED</button>
+      <a id="wa-link" href="https://wa.me/971558513794" class="btn-wa" target="_blank">💬 WhatsApp</a>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:14px;font-size:11px;color:#9A8468;font-family:Arial,sans-serif;line-height:1.7;">
+    Ships worldwide from Dubai · Free UAE delivery on orders over 365 AED · Production: 3 working days
+  </div>
+</div>
+
+<script>
+var selFont = 'nastaliq';
+var selColor = '#1a1a1a';
+var selColorName = 'Black';
+
+var fontCSS = {
+  nastaliq: "font-family:'Scheherazade New',serif;",
+  kufic: "font-family:'Amiri',serif;",
+  shekasteh: "font-family:'Amiri',serif;font-style:italic;"
+};
+
+var fontNames = { nastaliq: 'Nastaliq', kufic: 'Kufic', shekasteh: 'Shekasteh' };
+var fontValues = { nastaliq: '342', kufic: '343', shekasteh: '344' };
+var colorValues = { 'Black': '345', 'Red': '346', 'Green': '347', 'Blue': '348', 'Navy Blue': '349' };
+
+var nameMap = {
+  'ahmed':'احمد','ahmad':'احمد','muhammad':'محمد','mohammed':'محمد','mohammad':'محمد',
+  'ali':'علی','omar':'عمر','umar':'عمر','amir':'امیر','ameer':'امیر',
+  'hassan':'حسن','hussain':'حسین','hussein':'حسین','ibrahim':'ابراهیم',
+  'ismail':'اسماعیل','yusuf':'یوسف','adam':'آدم','khalid':'خالد','khaled':'خالد',
+  'faisal':'فیصل','fahad':'فهد','sara':'سارا','sarah':'سارا','fatima':'فاطمه',
+  'noor':'نور','nur':'نور','layla':'لیلا','leila':'لیلا','maryam':'مریم',
+  'mariam':'مریم','zainab':'زینب','rania':'رانیا','rana':'رانا',
+  'tariq':'طارق','tarek':'طارق','walid':'ولید','rami':'رامی','sami':'سامی',
+  'nabil':'نبیل','karim':'کریم','kareem':'کریم','malik':'مالک','ziad':'زیاد',
+  'badr':'بدر','faris':'فارس','hamza':'حمزه','bilal':'بلال','salim':'سالم',
+  'nadia':'نادیا','huda':'هدا','dina':'دینا','iman':'ایمان','aisha':'عایشه',
+  'amina':'امینه','yasmin':'یاسمین','jasmine':'یاسمین','lina':'لینا',
+  'kevin':'کوین','daniel':'دنیل','david':'داوود','john':'جان','peter':'پیتر',
+  'mark':'مارک','george':'جورج','alex':'الکس','michael':'مایکل',
+  'anna':'آنا','emma':'اما','sofia':'صوفیا','sophia':'صوفیا',
+  'anthony':'انتونی','thomas':'توماس','ryan':'رایان',
+  'idris':'ادریس','salman':'سلمان','zaid':'زید','anas':'انس',
+  'murad':'مراد','adel':'عادل','adil':'عادل','yasser':'یاسر',
+  'zahra':'زهرا','narges':'نرگس','nasrin':'نسرین'
+};
+
+var transMap = {
+  'sh':'ش','kh':'خ','gh':'غ','dh':'ذ','th':'ث','aa':'ع','ss':'ص','dd':'ض',
+  'tt':'ط','zz':'ظ','ch':'چ','zh':'ژ',
+  'a':'ا','b':'ب','t':'ت','j':'ج','h':'ح','d':'د','r':'ر','z':'ز',
+  's':'س','f':'ف','q':'ق','k':'ک','l':'ل','m':'م','n':'ن','w':'و',
+  'y':'ی','e':'ه','o':'و','u':'و','i':'ی','p':'پ','v':'و','g':'گ','c':'ک'
+};
+
+function transliterate(text) {
+  if (!text) return '';
+  if (/[\u0600-\u06FF]/.test(text)) return text;
+  var lower = text.toLowerCase().trim();
+  if (nameMap[lower]) return nameMap[lower];
+  var words = lower.split(/\s+/);
+  return words.map(function(word) {
+    if (nameMap[word]) return nameMap[word];
+    var arabic = '';
+    var i = 0;
+    while (i < word.length) {
+      var two = word.substr(i,2);
+      var one = word.substr(i,1);
+      if (two && transMap[two]) { arabic += transMap[two]; i += 2; }
+      else if (transMap[one]) { arabic += transMap[one]; i++; }
+      else i++;
+    }
+    return arabic || word;
+  }).join(' ');
+}
+
+function onNameInput() {
+  var text = document.getElementById('name-inp').value.trim();
+  var hint = document.getElementById('arabic-hint');
+  var preview = document.getElementById('preview-text');
+  var btn = document.getElementById('order-btn');
+  var waLink = document.getElementById('wa-link');
+
+  if (!text) {
+    preview.innerHTML = '<span class="tag-placeholder">Your name here</span>';
+    hint.textContent = '';
+    btn.disabled = true;
+    return;
+  }
+
+  var arabic = transliterate(text);
+  preview.textContent = arabic;
+  preview.style.cssText = 'font-size:clamp(16px,4vw,28px);text-align:center;padding:8px 16px;line-height:1.4;direction:rtl;word-break:break-word;max-width:100%;transition:all 0.3s;margin-top:8px;color:' + selColor + ';' + fontCSS[selFont];
+  hint.textContent = arabic !== text ? 'Arabic: ' + arabic : '';
+  btn.disabled = false;
+
+  var msg = 'Hi Craftihouse! I want to order a personalized leather luggage tag.'
+    + '\n\nText: ' + text + (arabic !== text ? ' (' + arabic + ')' : '')
+    + '\nStyle: ' + fontNames[selFont]
+    + '\nColor: ' + selColorName
+    + '\nSize: 11x7cm · Price: 150 AED';
+  waLink.href = 'https://wa.me/971558513794?text=' + encodeURIComponent(msg);
+}
+
+function selectFont(font, el) {
+  selFont = font;
+  document.querySelectorAll('.font-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  onNameInput();
+}
+
+function selectColor(el) {
+  selColor = el.dataset.color;
+  selColorName = el.dataset.name;
+  document.querySelectorAll('.color-dot').forEach(function(d) { d.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('color-name').textContent = selColorName;
+  onNameInput();
+}
+
+function doOrder() {
+  var text = document.getElementById('name-inp').value.trim();
+  if (!text) { alert('Please enter your name first.'); return; }
+  var arabic = transliterate(text);
+  var nameVal = text + (arabic !== text ? ' (' + arabic + ')' : '');
+  var fontVal = fontValues[selFont] || '342';
+  var colorVal = colorValues[selColorName] || '345';
+  var btn = document.getElementById('order-btn');
+  btn.textContent = 'Adding to cart...';
+  btn.disabled = true;
+  window.location.href = 'https://craftihouse.com/cart.php?action=add&product_id=9861'
+    + '&attribute%5B194%5D=' + encodeURIComponent(nameVal)
+    + '&attribute%5B195%5D=' + fontVal
+    + '&attribute%5B196%5D=' + colorVal;
+}
+</script>
+</body>
+</html>
