@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Craftihouse AI Description Rewriter</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#C9A84C;
+  --gold-light:#E8C97A;
+  --dark:#0D0804;
+  --dark2:#1C110A;
+  --dark3:#3D200E;
+  --cream:#FDF8F0;
+  --text:#F2E8D5;
+  --muted:#9A8468;
+}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+/* Header */
+.header{background:linear-gradient(160deg,var(--dark2),var(--dark3));padding:20px 32px;border-bottom:3px solid var(--gold);display:flex;align-items:center;justify-content:space-between;}
+.header h1{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold-light);font-weight:400;}
+.header p{font-size:11px;color:var(--muted);margin-top:2px;}
+.badge{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--gold);letter-spacing:0.1em;}
+
+/* Main */
+.main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.step{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.1);border-radius:14px;padding:20px;position:relative;}
+.step.active{border-color:rgba(201,168,76,0.4);background:rgba(201,168,76,0.04);}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8A5E1A);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:10px;}
+.step h3{font-size:13px;color:var(--gold-light);margin-bottom:4px;}
+.step p{font-size:11px;color:var(--muted);line-height:1.6;}
+
+/* Upload area */
+.upload-card{background:rgba(255,255,255,0.02);border:2px dashed rgba(201,168,76,0.25);border-radius:16px;padding:40px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:24px;}
+.upload-card:hover{border-color:rgba(201,168,76,0.5);background:rgba(201,168,76,0.03);}
+.upload-card.has-file{border-style:solid;border-color:rgba(90,168,118,0.4);background:rgba(90,168,118,0.04);}
+.upload-icon{font-size:40px;margin-bottom:12px;opacity:0.6;}
+.upload-title{font-size:16px;color:var(--gold-light);margin-bottom:6px;font-family:'Playfair Display',serif;}
+.upload-sub{font-size:12px;color:var(--muted);}
+
+/* Settings */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+@media(max-width:700px){.settings-grid{grid-template-columns:1fr;}.steps{grid-template-columns:1fr;}}
+.setting-card{background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.1);border-radius:12px;padding:16px;}
+.setting-label{font-size:9px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:block;}
+.setting-select,.setting-input{width:100%;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.18);border-radius:8px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;padding:8px 12px;outline:none;}
+.setting-select option{background:var(--dark2);}
+
+/* Stats bar */
+.stats-bar{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+.stat{background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.1);border-radius:10px;padding:12px 18px;flex:1;min-width:120px;}
+.stat-val{font-size:22px;font-weight:600;color:var(--gold-light);font-family:'Playfair Display',serif;}
+.stat-label{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* Progress */
+.progress-card{background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.15);border-radius:14px;padding:20px;margin-bottom:24px;display:none;}
+.progress-card.show{display:block;}
+.progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.progress-title{font-size:13px;color:var(--gold-light);}
+.progress-pct{font-size:13px;color:var(--gold);font-weight:600;}
+.progress-bar-bg{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-bottom:10px;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;transition:width 0.3s;width:0%;}
+.progress-current{font-size:11px;color:var(--muted);}
+.progress-log{max-height:120px;overflow-y:auto;margin-top:10px;}
+.log-item{font-size:10px;color:var(--muted);padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.log-item.success{color:#5AA876;}
+.log-item.error{color:#E57373;}
+
+/* Buttons */
+.btn-primary{padding:13px 28px;background:linear-gradient(135deg,var(--gold),#8A5E1A);border:none;border-radius:10px;color:var(--dark);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.05em;transition:opacity 0.2s;}
+.btn-primary:hover{opacity:0.9;}
+.btn-primary:disabled{opacity:0.35;cursor:not-allowed;}
+.btn-secondary{padding:13px 24px;background:transparent;border:1px solid rgba(201,168,76,0.25);border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold-light);}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+
+/* Preview table */
+.preview-card{background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.1);border-radius:14px;overflow:hidden;margin-top:24px;display:none;}
+.preview-card.show{display:block;}
+.preview-header{padding:14px 20px;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:space-between;}
+.preview-header h3{font-size:13px;color:var(--gold-light);}
+.preview-table{width:100%;border-collapse:collapse;font-size:11px;}
+.preview-table th{padding:10px 16px;text-align:left;font-size:9px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;border-bottom:1px solid rgba(201,168,76,0.08);}
+.preview-table td{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:top;max-width:300px;}
+.preview-table tr:hover td{background:rgba(201,168,76,0.02);}
+.status-done{color:#5AA876;font-size:10px;}
+.status-pending{color:var(--muted);font-size:10px;}
+.status-error{color:#E57373;font-size:10px;}
+.desc-preview{max-height:60px;overflow:hidden;color:var(--muted);line-height:1.5;}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:10px;font-size:12px;margin-bottom:16px;display:none;}
+.alert.show{display:block;}
+.alert-info{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:var(--gold-light);}
+.alert-error{background:rgba(229,115,115,0.08);border:1px solid rgba(229,115,115,0.2);color:#E57373;}
+.alert-success{background:rgba(90,168,118,0.08);border:1px solid rgba(90,168,118,0.2);color:#5AA876;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>✦ AI Product Description Rewriter</h1>
+    <p>Craftihouse · BigCommerce Bulk SEO Tool</p>
+  </div>
+  <div class="badge">Powered by Claude AI</div>
+</div>
+
+<div class="main">
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active">
+      <div class="step-num">1</div>
+      <h3>Export from BigCommerce</h3>
+      <p>Go to Products → Export → Download CSV with product name and description columns</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Upload & Configure</h3>
+      <p>Upload your CSV here, set batch size and style preferences, then start the AI rewrite</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Import to BigCommerce</h3>
+      <p>Download the updated CSV and import back to BigCommerce to update all descriptions</p>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  <div id="alert" class="alert"></div>
+
+  <!-- Upload -->
+  <div id="upload-area" class="upload-card" onclick="document.getElementById('csv-file').click()">
+    <div class="upload-icon">📄</div>
+    <div class="upload-title">Upload BigCommerce Products CSV</div>
+    <div class="upload-sub">Click to browse or drag and drop your exported CSV file</div>
+    <input type="file" id="csv-file" accept=".csv" style="display:none;" onchange="handleFile(this)"/>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val" id="stat-total">0</div><div class="stat-label">Total Products</div></div>
+    <div class="stat"><div class="stat-val" id="stat-with-desc">0</div><div class="stat-label">Have Descriptions</div></div>
+    <div class="stat"><div class="stat-val" id="stat-no-desc">0</div><div class="stat-label">Missing Descriptions</div></div>
+    <div class="stat"><div class="stat-val" id="stat-done">0</div><div class="stat-label">Rewritten</div></div>
+  </div>
+
+  <!-- Settings -->
+  <div class="settings-grid">
+
+    <div class="setting-card">
+      <span class="setting-label">Batch Size</span>
+      <select id="batch-size" class="setting-select">
+        <option value="5">5 products (test)</option>
+        <option value="25">25 products</option>
+        <option value="50">50 products</option>
+        <option value="100" selected>100 products</option>
+        <option value="500">500 products</option>
+        <option value="9999">All products</option>
+      </select>
+    </div>
+    <div class="setting-card">
+      <span class="setting-label">Rewrite Mode</span>
+      <select id="rewrite-mode" class="setting-select">
+        <option value="enhance">Enhance existing descriptions</option>
+        <option value="rewrite">Full rewrite from scratch</option>
+        <option value="empty-only">Only empty descriptions</option>
+      </select>
+    </div>
+    <div class="setting-card">
+      <span class="setting-label">Brand Voice</span>
+      <select id="brand-voice" class="setting-select">
+        <option value="luxury">Luxury & Elegant</option>
+        <option value="friendly">Friendly & Warm</option>
+        <option value="professional">Professional & Clear</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div id="progress-card" class="progress-card">
+    <div class="progress-header">
+      <div class="progress-title">Rewriting descriptions...</div>
+      <div class="progress-pct" id="progress-pct">0%</div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <div class="progress-current" id="progress-current">Starting...</div>
+    <div class="progress-log" id="progress-log"></div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row" style="margin-bottom:24px;">
+    <button class="btn-primary" id="start-btn" onclick="startRewrite()" disabled>✦ Start AI Rewrite</button>
+    <button class="btn-secondary" id="download-btn" onclick="downloadCSV()" style="display:none;">⬇ Download Updated CSV</button>
+    <button class="btn-secondary" onclick="resetAll()">Reset</button>
+    <span id="status-text" style="font-size:11px;color:var(--muted);"></span>
+  </div>
+
+  <!-- Preview Table -->
+  <div id="preview-card" class="preview-card">
+    <div class="preview-header">
+      <h3>Products Preview</h3>
+      <span style="font-size:11px;color:var(--muted);" id="preview-count"></span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="preview-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Product Name</th>
+            <th>Original Description</th>
+            <th>New HTML Description</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="preview-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var csvData = [];
+var headers = [];
+var processedData = [];
+var nameCol = '';
+var descCol = '';
+var isRunning = false;
+var doneCount = 0;
+
+function showAlert(msg, type) {
+  var el = document.getElementById('alert');
+  el.className = 'alert show alert-' + type;
+  el.textContent = msg;
+  setTimeout(function() { el.classList.remove('show'); }, 5000);
+}
+
+function handleFile(input) {
+  var file = input.files[0];
+  if (!file) return;
+
+  document.getElementById('upload-area').classList.add('has-file');
+  document.getElementById('upload-area').querySelector('.upload-title').textContent = file.name;
+  document.getElementById('upload-area').querySelector('.upload-sub').textContent = 'File loaded — ' + (file.size/1024).toFixed(1) + ' KB';
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      headers = results.meta.fields;
+      csvData = results.data;
+      processedData = JSON.parse(JSON.stringify(csvData));
+
+      // Detect columns
+      nameCol = detectCol(['Product Name', 'Name', 'name', 'product_name', 'title', 'Title']);
+      descCol = detectCol(['Description', 'Product Description', 'description', 'desc', 'body_html', 'Body HTML', 'product_description']);
+
+      if (!nameCol) { showAlert('Could not find product name column. Please check your CSV.', 'error'); return; }
+      if (!descCol) { showAlert('Could not find description column. Please check your CSV.', 'error'); return; }
+
+      console.log('Detected columns - Name:', nameCol, 'Description:', descCol);
+      console.log('All columns:', headers);
+      var withDesc = csvData.filter(function(r) { return r[descCol] && r[descCol].trim().length > 10; }).length;
+      var noDesc = csvData.length - withDesc;
+
+      document.getElementById('stat-total').textContent = csvData.length;
+      document.getElementById('stat-with-desc').textContent = withDesc;
+      document.getElementById('stat-no-desc').textContent = noDesc;
+      document.getElementById('stat-done').textContent = '0';
+      document.getElementById('start-btn').disabled = false;
+
+      renderPreview();
+      showAlert('CSV loaded successfully! ' + csvData.length + ' products found. Name column: "' + nameCol + '", Description column: "' + descCol + '"', 'success');
+    },
+    error: function(err) { showAlert('Error reading CSV: ' + err.message, 'error'); }
+  });
+}
+
+function detectCol(candidates) {
+  for (var i = 0; i < candidates.length; i++) {
+    if (headers.indexOf(candidates[i]) > -1) return candidates[i];
+  }
+  // Fuzzy match
+  for (var j = 0; j < headers.length; j++) {
+    var h = headers[j].toLowerCase();
+    if (h.indexOf('name') > -1 && candidates[0].toLowerCase().indexOf('name') > -1) return headers[j];
+    if (h.indexOf('desc') > -1 && candidates[0].toLowerCase().indexOf('desc') > -1) return headers[j];
+  }
+  return '';
+}
+
+function renderPreview() {
+  var tbody = document.getElementById('preview-tbody');
+  var card = document.getElementById('preview-card');
+  card.classList.add('show');
+  document.getElementById('preview-count').textContent = processedData.length + ' products';
+
+  var rows = '';
+  var limit = Math.min(processedData.length, 50);
+  for (var i = 0; i < limit; i++) {
+    var row = processedData[i];
+    var name = row[nameCol] || '(no name)';
+    var origDesc = row[descCol] || '';
+    var newDesc = row['_new_desc'] || '';
+    var status = row['_status'] || 'pending';
+
+    rows += '<tr>'
+      + '<td style="color:var(--muted);">' + (i+1) + '</td>'
+      + '<td style="color:var(--text);font-weight:500;">' + escHtml(name.substring(0, 60)) + (name.length > 60 ? '...' : '') + '</td>'
+      + '<td><div class="desc-preview">' + escHtml(origDesc.substring(0, 120)) + (origDesc.length > 120 ? '...' : '') + '</div></td>'
+      + '<td><div class="desc-preview">' + (newDesc ? escHtml(newDesc.substring(0, 120)) + '...' : '<span style="color:var(--muted);font-style:italic;">Pending...</span>') + '</div></td>'
+      + '<td><span class="status-' + status + '">' + (status === 'done' ? '✓ Done' : status === 'error' ? '✗ Error' : '○ Pending') + '</span></td>'
+      + '</tr>';
+  }
+  if (processedData.length > 50) {
+    rows += '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:12px;">... and ' + (processedData.length - 50) + ' more products</td></tr>';
+  }
+  tbody.innerHTML = rows;
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function startRewrite() {
+  if (isRunning) return;
+  if (!csvData.length) { showAlert('Please upload a CSV file first.', 'error'); return; }
+
+  var batchSize = parseInt(document.getElementById('batch-size').value);
+  var mode = document.getElementById('rewrite-mode').value;
+  var voice = document.getElementById('brand-voice').value;
+
+  var toProcess = [];
+  for (var i = 0; i < processedData.length && toProcess.length < batchSize; i++) {
+    var row = processedData[i];
+    var hasDesc = row[descCol] && row[descCol].trim().length > 10;
+    if (mode === 'empty-only' && hasDesc) continue;
+    toProcess.push({ index: i, row: row });
+  }
+
+  if (!toProcess.length) { showAlert('No products to process with current settings.', 'info'); return; }
+
+  isRunning = true;
+  doneCount = 0;
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('download-btn').style.display = 'none';
+  document.getElementById('progress-card').classList.add('show');
+
+  var voicePrompt = voice === 'luxury'
+    ? 'Use a luxury, elegant tone. This is a premium handmade gifts store from Dubai.'
+    : voice === 'friendly'
+    ? 'Use a warm, friendly and approachable tone. Make customers feel welcome.'
+    : 'Use a clear, professional and informative tone.';
+
+  for (var j = 0; j < toProcess.length; j++) {
+    var item = toProcess[j];
+    var pct = Math.round((j / toProcess.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('progress-current').textContent = 'Processing: ' + (item.row[nameCol] || 'Product ' + (j+1));
+
+    try {
+      var newDesc = await rewriteDescription(item.row[nameCol], item.row[descCol], voicePrompt, mode);
+      processedData[item.index][descCol] = newDesc;
+      processedData[item.index]['_new_desc'] = newDesc;
+      processedData[item.index]['_status'] = 'done';
+      doneCount++;
+      addLog('✓ ' + (item.row[nameCol] || 'Product').substring(0, 50), 'success');
+    } catch(e) {
+      processedData[item.index]['_status'] = 'error';
+      addLog('✗ Error: ' + (item.row[nameCol] || 'Product').substring(0, 40) + ' — ' + e.message, 'error');
+      console.error('Full error:', e);
+    }
+
+    document.getElementById('stat-done').textContent = doneCount;
+
+    // Small delay to avoid rate limits
+    await new Promise(function(res) { setTimeout(res, 300); });
+  }
+
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-pct').textContent = '100%';
+  document.getElementById('progress-current').textContent = 'Complete! ' + doneCount + ' products rewritten.';
+  document.getElementById('download-btn').style.display = 'block';
+  document.getElementById('start-btn').disabled = false;
+  isRunning = false;
+  renderPreview();
+  showAlert('Done! ' + doneCount + ' products rewritten. Click Download to get your updated CSV.', 'success');
+}
+
+async function rewriteDescription(name, currentDesc, voicePrompt, mode) {
+  var systemPrompt = 'You are a world-class SEO copywriter for Craftihouse (craftihouse.com), a premium handmade and artisan gifts store established in 2003 in Dubai, UAE. You write product descriptions that rank on Google and convert browsers into buyers.\n\n'
+    + voicePrompt + '\n\n'
+    + 'STRICT RULES - follow exactly:\n'
+    + '1. Output ONLY valid HTML - no markdown, no backticks, no explanations\n'
+    + '2. Structure: Start with <h2> product title, then <p> intro paragraph, then <h3>Key Features</h3> with <ul><li> list, then <h3>Perfect For</h3> with <ul><li> occasions list, then <p> closing with shipping info\n'
+    + '3. SEO: Include product type, material, origin (Dubai/UAE/handmade/artisan) naturally in text\n'
+    + '4. Emotional: Use sensory language - textures, colors, craftsmanship, heritage\n'
+    + '5. Length: 200-350 words\n'
+    + '6. Always end with: <p><strong>Ships worldwide from Dubai.</strong> Free UAE delivery on orders over 365 AED. Production and dispatch within 24 hours.</p>\n'
+    + '7. Never copy the product name verbatim as the h2 - rewrite it more descriptively\n'
+    + '8. Bold 2-3 key phrases using <strong> tags for SEO emphasis';
+
+  var userPrompt = mode === 'rewrite' || !currentDesc || currentDesc.trim().length < 10
+    ? 'Write a compelling, SEO-optimized HTML product description for this Craftihouse product. Make it rich, emotional and keyword-rich:\n\nProduct Name: ' + name + '\n\nInclude relevant keywords about the material, craftsmanship, occasion uses and Dubai/UAE origin.'
+    : 'Transform this product description into a polished, SEO-optimized HTML description. Make it much better - more engaging, keyword-rich, and conversion-focused. Add proper HTML structure with h2, h3, ul tags:\n\nProduct Name: ' + name + '\n\nCurrent Description:\n' + currentDesc.substring(0, 1000) + '\n\nIMPORTANT: Output ONLY the improved HTML description.';
+
+  var response = await fetch('https://craftihouse-rewriter.craftihouse.workers.dev', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 1500,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    })
+  });
+
+  var data = await response.json();
+  if (!response.ok) {
+    throw new Error('HTTP ' + response.status + ' — ' + JSON.stringify(data));
+  }
+  if (data.error) {
+    throw new Error(data.error.message || JSON.stringify(data.error));
+  }
+  if (data.content && data.content[0] && data.content[0].text) {
+    return data.content[0].text.trim();
+  }
+  throw new Error('Unexpected response: ' + JSON.stringify(data).substring(0, 100));
+}
+
+function addLog(msg, type) {
+  var log = document.getElementById('progress-log');
+  var item = document.createElement('div');
+  item.className = 'log-item ' + type;
+  item.textContent = msg;
+  log.appendChild(item);
+  log.scrollTop = log.scrollHeight;
+}
+
+function downloadCSV() {
+  // Remove internal columns before export
+  var exportData = processedData.map(function(row) {
+    var clean = {};
+    headers.forEach(function(h) { clean[h] = row[h] || ''; });
+    return clean;
+  });
+
+  var csv = Papa.unparse(exportData, { header: true });
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'craftihouse-products-updated-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function resetAll() {
+  csvData = [];
+  headers = [];
+  processedData = [];
+  nameCol = '';
+  descCol = '';
+  doneCount = 0;
+  isRunning = false;
+  document.getElementById('csv-file').value = '';
+  document.getElementById('upload-area').classList.remove('has-file');
+  document.getElementById('upload-area').querySelector('.upload-title').textContent = 'Upload BigCommerce Products CSV';
+  document.getElementById('upload-area').querySelector('.upload-sub').textContent = 'Click to browse or drag and drop your exported CSV file';
+  document.getElementById('stat-total').textContent = '0';
+  document.getElementById('stat-with-desc').textContent = '0';
+  document.getElementById('stat-no-desc').textContent = '0';
+  document.getElementById('stat-done').textContent = '0';
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('download-btn').style.display = 'none';
+  document.getElementById('progress-card').classList.remove('show');
+  document.getElementById('preview-card').classList.remove('show');
+}
+
+// Drag and drop
+var ua = document.getElementById('upload-area');
+ua.ondragover = function(e) { e.preventDefault(); ua.style.borderColor='var(--gold)'; };
+ua.ondragleave = function() { ua.style.borderColor=''; };
+ua.ondrop = function(e) {
+  e.preventDefault();
+  ua.style.borderColor = '';
+  var file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith('.csv')) {
+    var input = document.getElementById('csv-file');
+    var dt = new DataTransfer();
+    dt.items.add(file);
+    input.files = dt.files;
+    handleFile(input);
+  }
+};
+</script>
+</body>
+</html>
